@@ -52,3 +52,9 @@ clb <- colorRampPalette(c("brown2","brown3", "coral2"))(100)
 plot(l2011[[4]], col=cl)
 
 
+
+
+
+
+
+
