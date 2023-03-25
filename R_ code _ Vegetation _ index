@@ -1,0 +1,24 @@
+#calculating spectral indicese
+
+library(raster)
+setwd("/Users/stefanosamore/desktop/lab")
+
+#exercise: import the firt file
+l1992 <- brick("defor1_.png")
+l1992
+
+#exercise: plot the image via plotRBG
+plotRGB(l1992, r=1, g=2, b=3, stretch="Lin")
+
+#what is NIR?
+#NIR=1
+#RED=2
+#GREEN=3
+
+plotRGB(l1992, r=4, g=3, b=2, stretch="Lin")
+export:1,2,3
+
+
+#exercise: calculate DVI for 1992
+
+
