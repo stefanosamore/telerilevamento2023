@@ -1,9 +1,14 @@
+#R code for importing and analysing several images
 library(raster)
 setwd("/Users/stefanosamore/desktop/lab")
+
+lst_2000<- raster ("lst_2000.tif") 
+plot(lst_2000)
 
 # setwd("/Users/name/Desktop/lab/greenland") # Mac
 setwd("/Users/stefanosamore/Desktop/lab/greenland_data")
 
+#exercise import all the dates
 lst_2000 <- raster("lst_2000.tif")
 lst_2005 <- raster("lst_2005.tif")
 lst_2010 <- raster("lst_2010.tif")
