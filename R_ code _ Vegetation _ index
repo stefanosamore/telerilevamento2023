@@ -3,22 +3,67 @@
 library(raster)
 setwd("/Users/stefanosamore/desktop/lab")
 
-#exercise: import the firt file
+#exercise: importiamo il primo file
 l1992 <- brick("defor1_.png")
 l1992
 
-#exercise: plot the image via plotRBG
+#exercise: plot l'immagine via plotRBG
 plotRGB(l1992, r=1, g=2, b=3, stretch="Lin")
 
 #what is NIR?
 #NIR=1
 #RED=2
 #GREEN=3
+#se le immagine vengono esportate dall NASA, il NIR è sempre la prima banda
 
+#Clacoliamo il DVI per il 1992
+dvi1992 = l1992[[1]] - l1992[[2]]  # NIR - red
+dvi1992
+#plot DVI
 plotRGB(l1992, r=4, g=3, b=2, stretch="Lin")
 export:1,2,3
+#assegniamo una palette
+cl <- colorRampPalette(c("darkblue", "yellow", "red", "black"))(100)
+plot(dvi1992, col = cl) 
 
+#osserviamo il DVI range
 
-#exercise: calculate DVI for 1992
+# Calcoliamo il DVI anche per il 2006
+dvi2006 = l2006[[1]] - l2006[[2]]
+# Plot DVI
+plot(dvi2006, col = cl)
+
+#Facciamo un confronto tra il 1992 e il 2006 calcolando le differenze
+#plotto in un multiframe le due immagine
+par(mfrow = c(2, 1))
+plotRGB(l1992, 1, 2, 3, stretch = "Lin")
+plotRGB(l2006, 1, 2, 3, stretch = "Lin")
+
+#Calcolo la differenza 
+dvi_dif = dvi1992 - dvi2006
+#1992 e 2006 hanno estensioni diverse, come risutato danno l'intersezione tra di loro
+
+#plotto il risultato
+cld <- colorRampPalette(c('blue','white','red'))(100)
+plot(dvi_dif, col=cld)
+# interpretazione dei risultati: maggiore è la differenza data dal confronto
+vuol dire che la copertura vegetale e diminuità(deforestazione)
+#se il rapporto è negativo c'è stato un aumento della copertura forestale.
+
+#Facciamo gli stessi passaggi per calcolarci NDVI (Normalized Difference Vegetation Index)
+
+# NDVI per il 1992
+ndvi1992 = dvi1992 / (l1992[[1]] + l1992[[2]]) 
+cl <- colorRampPalette(c('darkblue','yellow','red','black'))(100) 
+plot(ndvi1992, col = cl) 
+
+# NDVI per il 2006
+ndvi2006 = dvi2006 / (l2006[[1]] + l2006[[2]])
+plot(ndvi2006, col = cl)
+
+# Calculiamo la  differenza dei due NDVI 
+ndvi_dif = ndvi1992 - ndvi2006
+plot(ndvi_dif, col = cl)
+
 
 
