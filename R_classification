@@ -1,0 +1,4 @@
+# CLASSIFICAZIONE dei dati di telerilevamento tramite RSToolbox
+# Pacchetti
+library(raster)
+library(RStoolbox)
