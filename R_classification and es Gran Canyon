@@ -59,18 +59,33 @@ plotRGB(gc_crop, 1, 2, 3, stretch = "lin")
 ncell(grand_canyon)   # numero di pixel della foto originale 
 ncell(gc_crop)   # numero di pixel della foto croppata
 
-# Classificazione immagine in 2 classi
-gcc2 <- unsuperClass(gc, nClasses=2)
-gcc2
-plot(gcc2$map)
+# CLASSIFICAZIONE (Grand Canyon): discriminazioni di diversi tipi mineralogici nella stessa roccia
 
-# Classificazione immagine in 4 classi
-gcc4 <- unsuperClass(gc, nClasses=4)
-plot(gcc4$map)
+# Importazione del dato
+gc <- brick("dolansprings_oli_2013088_canyon_lrg.jpg")
+gc
+# L'immagine è a 8 bit - 0->255
+# Rosso = 1
+# Verde = 2
+# Blu = 3
 
+# Plot RGB dell'immagine (stretch lineare)
+plotRGB(gc, r=1, g=2, b=3, stretch="lin")
 
+# Plot RGB dell'immagine (stretch lineare)
+plotRGB(gc, r=1, g=2, b=3, stretch="hist") # aumenta il contrasto 
 
-# Esercizio: classifocare la mappa in 4 classi
+# Classificazione
+# l'immagine da classificare, il numero di classi, il numero di px campione 
+gcclass2 <- unsuperClass (gc, nClasses=2)
+gcclass2
+
+# Plot dell'immagine in classi
+plot(gcclass2$map)
+# La classe verde corrisponde alle rocce
+# La classe bianca corrisponde all'acqua e ombre 
+
+# Classifichiamo per 4 classi
 singlenr_2 <- getValues(gc_crop)
 singlenr_2
 
@@ -79,13 +94,24 @@ kcluster_2
 
 gcclass_2 <- setValues(gc_crop[[1]], kcluster_2$cluster)
 
-cl <- colorRampPalette(c('yellow','black','red', 'blue'))(100)
-plot(gcclass_2, col=cl)
+# Cambio il colore delle classi
+clc <- colorRampPalette(c("yellow", "red", "blue", "black"))(100)
+plot(gcclass4$map, col=clc)
+# Una classe corrisponde alle nuvole e alle sabbie
+# Una classe classe corrisponde all'acqua e le ombre 
+# Altre due classi rappresentano determinate composizioni mineralogiche
+
+# Visualizzazione della rappresentazione in 4 classi
+par(mfrow=c(2,1))
+plot(gcclass4$map, col=clc)
+plotRGB(gc, r=1, g=2, b=3, stretch="hist")
+
 
 frequencies <- freq(gcclass_2)
 frequencies
 tot <- ncell(gcclass_2)
 percentages = frequencies * 100 /  tot
 percentages
+
 
 
