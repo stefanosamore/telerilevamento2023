@@ -61,7 +61,7 @@ plot(ndvi1992, col = cl)
 ndvi2006 = dvi2006 / (l2006[[1]] + l2006[[2]])
 plot(ndvi2006, col = cl)
 
-# Calculiamo la  differenza dei due NDVI 
+# Calculiamo la  differenza dei due NDVI (1992 e 2006)
 ndvi_dif = ndvi1992 - ndvi2006
 plot(ndvi_dif, col = cl)
 
