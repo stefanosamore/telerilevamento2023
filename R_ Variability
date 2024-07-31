@@ -1,0 +1,87 @@
+# VARIABILITY
+
+#Pacchetti richiesti
+library(raster)
+library(ggplot2)
+library(patchwork)
+library(viridis)
+
+setwd("/Users/stefanosamore/desktop/lab")
+
+# Importo immagine Similaun da Sentinel 
+sen <- brick("sentinel.png")
+ncell(sen)  
+
+# Plotto l'immagine
+plot(sen)
+plotRGB(sen, 1, 2, 3, stretch = "Lin") # 1 = NIR, 2 = red, 3 = green
+
+# NIR 
+plotRGB(sen, 2, 1, 3, stretch = "Lin")
+
+# Calcolo la variabilità
+nir <- sen[[1]]
+mean3 <- focal(nir, matrix(1/9, 3, 3), fun = mean)
+
+plot(mean3)
+
+sd3 <- focal(nir, matrix(1/9, 3, 3), fun = sd)
+plot(sd3)
+
+sd7 <- focal(nir,matrix(1/49,7,7),fun = sd)
+dev.off()
+
+# Creo un dataframe
+sd3_d <- as.data.frame(sd3, xy = T)
+
+# Plot dataframe con ggplot2
+ggplot() +
+  geom_raster(sd3_d,
+              mapping = aes(x = x, y = y, fill = layer))
+
+# viridis
+ggplot() +
+  geom_raster(sd3_d,
+              mapping = aes(x = x, y = y, fill = layer)) +
+  scale_fill_viridis()     #default option = "viridis"
+#l'are con la più alta variabilità si presenta di colore giallo
+
+# cividis
+p1 <- ggplot() +
+  geom_raster(sd3_d,
+              mapping = aes(x = x, y = y, fill = layer)) +
+  scale_fill_viridis(option = "cividis")
+
+# magma 
+ggplot() +
+  geom_raster(sd3_d,
+              mapping = aes(x = x, y = y, fill = layer)) +
+  scale_fill_viridis(option = "magma")
+
+# titolo
+p2 <- ggplot() +
+  geom_raster(sd3_d,
+              mapping = aes(x = x, y = y, fill = layer))+
+  scale_fill_viridis(option = "magma") +
+  ggtitle("Standard deviation via the magma colour scale")
+
+p1 + p2
+
+
+# Multiframe 
+
+# viridis
+p1 <- ggplot() +
+  geom_raster(sd3_d,
+              mapping = aes(x = x, y = y, fill = layer)) +
+  scale_fill_viridis() +
+  ggtitle("Standard deviation via the viridis colour scale")
+
+# inferno
+p2 <- ggplot() +
+  geom_raster(sd3_d,
+              mapping = aes(x = x, y = y, fill = layer)) +
+  scale_fill_viridis(option = "inferno") +
+  ggtitle("Standard deviation via the inferno colour scale")
+
+p1 + p2
