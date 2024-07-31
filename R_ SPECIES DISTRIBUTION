@@ -1,0 +1,26 @@
+# MODELLI DI DISTRIBUSIONE DELLE SPECIE
+
+# Pacchetti richiesti
+install.packages("rgdal") #considera anche delle coordinate nello spazio
+install.packages("sdm") # modellizzare la distribuzione delle specie
+
+# Caricare il file su sdm package (file di esempio)
+file <- system.file("external/species.shp", package = "sdm")
+# # La cartella si chiama "external", all'interno di "external" è presente il file "species.shp"
+# Creo uno shapefile
+species_data <- shapefile("C:/Users/Giacomo/AppData/Local/R/win-library/4.2/sdm/external/species.shp")
+species_data  
+
+# Distribuzione dei punti nello spazio:
+plot(species, pch=19) 
+
+# Vedere le occorrenze di presence/absence delle specie ( 0 - 1) 
+species$Occurrence
+
+Per plottare solo le presenze:
+plot(species[species$Occurrence == 1, ], col="blue", pch=19) ma così è più pesante.
+# Codice più pulito
+occ <- species$Occurrence
+plot(species[occ == 1, ], col="blue", pch=19)
+
+# Per mostrare insieme i punti con occurrence 0 e 1
