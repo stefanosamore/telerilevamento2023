@@ -3,7 +3,7 @@
 library(raster)
 setwd("/Users/stefanosamore/desktop/lab")
 
-#exercise: importiamo il primo file
+#exercise: importiamo il primo file defor_1 e lo assegniamo a l1992
 l1992 <- brick("defor1_.png")
 l1992
 
@@ -17,31 +17,37 @@ plotRGB(l1992, r=1, g=2, b=3, stretch="Lin")
 #se le immagine vengono esportate dall NASA, il NIR è sempre la prima banda
 
 #Clacoliamo il DVI per il 1992
+#Useremo il DVI per calcolare la salute della vegetazione
+#DVI calcolato come la differenza fra riflettanze: NIR - red
 dvi1992 = l1992[[1]] - l1992[[2]]  # NIR - red
 dvi1992
 #plot DVI
 plotRGB(l1992, r=4, g=3, b=2, stretch="Lin")
 export:1,2,3
-#assegniamo una palette
+#assegniamo una palette per visualizzare il DVI ottenuto
 cl <- colorRampPalette(c("darkblue", "yellow", "red", "black"))(100)
 plot(dvi1992, col = cl) 
+#rosso scuro -> vegetazione in salute
+#giallo -> vegetazione non in salute (o altri elementi, tipo il fiume)
 
-#osserviamo il DVI range
 
 # Calcoliamo il DVI anche per il 2006
 dvi2006 = l2006[[1]] - l2006[[2]]
 # Plot DVI
 plot(dvi2006, col = cl)
+#zone gialle sono molte: tanta deforestazione
 
 #Facciamo un confronto tra il 1992 e il 2006 calcolando le differenze
+#se c'è stata deforestazione -> diminuzione del DVI in quel punto
 #plotto in un multiframe le due immagine
 par(mfrow = c(2, 1))
 plotRGB(l1992, 1, 2, 3, stretch = "Lin")
 plotRGB(l2006, 1, 2, 3, stretch = "Lin")
 
-#Calcolo la differenza 
+#Calcolo la differenza fra i DVI delle due immagini
 dvi_dif = dvi1992 - dvi2006
 #1992 e 2006 hanno estensioni diverse, come risutato danno l'intersezione tra di loro
+# DVI nel 1992 è maggiore del DVI del 2006
 
 #plotto il risultato
 cld <- colorRampPalette(c('blue','white','red'))(100)
@@ -50,7 +56,14 @@ plot(dvi_dif, col=cld)
 vuol dire che la copertura vegetale e diminuità(deforestazione)
 #se il rapporto è negativo c'è stato un aumento della copertura forestale.
 
+#NDVI
 #Facciamo gli stessi passaggi per calcolarci NDVI (Normalized Difference Vegetation Index)
+# Caricamento delle immagini del 1992 e del 2006
+l1992 <- brick("defor1_.jpg") 
+l1992
+l2006 <- brick("defor2_.jpg")
+l2006
+# I valori vanno da -1 a +1
 
 # NDVI per il 1992
 ndvi1992 = dvi1992 / (l1992[[1]] + l1992[[2]]) 
@@ -65,5 +78,25 @@ plot(ndvi2006, col = cl)
 ndvi_dif = ndvi1992 - ndvi2006
 plot(ndvi_dif, col = cl)
 
+# AUTOMATIC SPECTRAL INDICES
+# Con la funzione "spectralIndices" calcoliamo una serie di indici multispettrali 
 
+# Installazione del pacchetto RStoolbox
+# install.packages("RStoolbox")
+library(RStoolbox) 
+# Spectral Indices del 1992
+si1992 <- spectralIndices(l1992, green=3, red=2, nir=1)
+#layer 3: verde
+# layer 2: rosso
+# layer 1: NIR
 
+plot(si1992, col=cl)
+
+# Spectral Indices 2006
+si2006 <- spectralIndices(l2006, green=3, red=2, nir=1)
+plot(si2006, col=cl)
+
+# install.packages("rasterdiv")
+library(rasterdiv)
+plot(copNDVI) # è l'NDVI di Copernicus
+#l'NDVI è calcolato come media globale degli NDVI dal 1999 al 2017
