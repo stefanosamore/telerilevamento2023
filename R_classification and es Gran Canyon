@@ -40,21 +40,45 @@ tot
 percentages <- round((frequencies*100)/tot, digits = 5)
 percentages  
 
+
+
 # GRAND CANYON 
 #https://landsat.visibleearth.nasa.gov/view.php?id=80948
+library(raster)
+#install.packages("devtools")
+#library (RStoolBox)
+#installing devtools
+#install.packages("devtools")
+#install_github("bleutner/RStoolbox")
+
+#per Mac
+setwd("/Users/stefanosamore/desktop/lab")
+brick("dolansprings_oli_2013088_canyon_lrg.jpg")
+
+
+brick("dolansprings_oli_2013088_canyon_lrg.jpeg")
 
 gc <- brick("dolansprings_oli_2013088_canyon_lrg.jpg")
+gc <- brick("dolansprings_oli_2013088_canyon_lrg.jpeg")
+gc
 
-# Plot RGB (con stretch lineare o a istogrammi) - # red = 1 green = 2 blue = 3
-plotRGB(gc, r=1, g=2, b=3, stretch="lin")
+# Plot RGB (con stretch lineare o a istogrammi) 
+# 3 layer del visibile 
+# Red = 1
+# Green = 2
+# Blu = 3
+## Plot RGB dell'immagine (stretch lineare)
+plotRGB(gc, r=1, g=2, b=3, stretch="lin") 
+## Plot RGB dell'immagine (stretch a istogrammi)
 plotRGB(gc, r=1, g=2, b=3, stretch="hist")
 
-# Change the stretch to histogram stretching
-plotRGB(grand_canyon, 1, 2, 3, stretch = "hist")
 
-# Croppiamo l'immagine che risulta troppo grande
-gc_crop <- crop(grand_canyon, drawExtent())
-plotRGB(gc_crop, 1, 2, 3, stretch = "lin")
+#Croppiamo l'iimagine che risulta essere troppo grande
+crop(gc, drawExtent())
+gcc<-crop(gc, drawExtent())
+gcc<-crop(gc, drawExtent())
+
+plotRGB(gcc, 1, 2, 3, stretch = "lin")
 
 ncell(grand_canyon)   # numero di pixel della foto originale 
 ncell(gc_crop)   # numero di pixel della foto croppata
@@ -114,4 +138,20 @@ percentages = frequencies * 100 /  tot
 percentages
 
 
+# Exercise: classify the map with 4 classes
+singlenr_2 <- getValues(gc_crop)
+singlenr_2
 
+kcluster_2 <- kmeans(singlenr_2, centers = 4)
+kcluster_2
+
+gcclass_2 <- setValues(gc_crop[[1]], kcluster_2$cluster)
+
+cl <- colorRampPalette(c('yellow','black','red', 'blue'))(100)
+plot(gcclass_2, col=cl)
+
+frequencies <- freq(gcclass_2)
+frequencies
+tot <- ncell(gcclass_2)
+percentages = frequencies * 100 /  tot
+percentages
