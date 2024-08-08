@@ -1,0 +1,47 @@
+# COPERNICUS: Scaricare e visualizzare i dati Earth Observation
+
+#install.packages("ncdf4")
+# Pacchetti richiesti
+library(ncdf4)
+library(raster)
+library(ggplot2)
+library(viridis)
+
+# Set wd su Mac
+setwd("/User/stefanosamore/desktop/lab")
+
+# download dei dati da -> https://land.copernicus.vgt.vito.be/PDF/portal/Application.html
+
+# caricamento dei dati
+soil_moist <- raster("c_gls_SSM1km_202305090000_CEURO_S1CSAR_V1.2.1.nc")
+soil_moist
+ncell(soil_moist)  # the total size
+plot(soil_moist)  # plot
+
+# convertire in un dataframe
+soil_moist_d <- as.data.frame(soil_moist, xy = T)
+
+# nominiamo le colonne dela dateframe 
+colnames(soil_moist_d)
+
+# Plot con ggplot
+ggplot() +
+  geom_raster(soil_moist_d,
+              mapping = aes(x = x, y = y, fill = Surface.Soil.Moisture)) +
+  ggtitle("Soil Moisture from Copernicus")
+# fill = e la terza colonna del datframe
+# Let's crop the image by coordinates
+ext <- c(23, 30, 62, 68) #declare the crop coordinates: x min, x max, y min and y max
+soil_moist_crop <- crop(soil_moist, ext)
+soil_moist_crop
+
+# convertiamo l'iimagine croppata in un dataframe
+soil_moist_crop_d <- as.data.frame(soil_moist_crop, xy= T)
+
+# plottiamo l'immagine croppata con ggplot, usiamo viridis come scala di colori
+ggplot() +
+  geom_raster(soil_moist_crop_d,
+              mapping = aes(x = x, y = y, fill = Surface.Soil.Moisture)) +
+  ggtitle("Cropped soil moisture from Copernicus") +
+  scale_fill_viridis()
+
