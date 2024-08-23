@@ -1,1 +1,725 @@
+#install.packages("terra")
+#install.packages("viridis")
+#install.packages("ggplot2")
+#install.packages("sf")
+#install.packages("raster")
+#install.packages("RStoolbox")
+#install.packages("devtools")
+
+library(raster)
+library(terra)
+library(viridis)
+library(ggplot2)
+library(sf)
+library(devtools)
+library(RStoolbox)
+
+#setting della wd
+setwd("C:/lab/Forni_Glacier_Analysis")
+
+#immagine marzo 2023
+rlist0323 <- list.files(pattern="LC08_L2SP_193028_20230315_20230321_02_T1_SR_B")
+rlist0323
+import0323 <- lapply(rlist0323, raster)
+import0323
+forni0323 <- stack(import0323)
+forni0323
+
+#plot
+plot(forni0323)
+plotRGB(forni0323, r=4, g=3, b=2, stretch="hist")
+
+# importiamo lo shapefile prodotto su Qgis
+areaghiacc <- st_read("ghiacciaio.shp")
+areaghiacc
+
+#ritagliamo un'area che comprende lo shape sull'immagine scaricata da Landsat
+fornicut0323 <- crop(forni0323, areaghiacc)
+fornicut0323
+plot(fornicut0323)
+plotRGB(fornicut0323, r=4, g=3, b=2, stretch="lin")
+plotRGB(fornicut0323, r=5, g=4, b=3, stretch="lin")
+
+#con la funzione mask abbiamo ritagliato il raster secondo la forma precisa dello shapefile
+forni0323d <- mask(fornicut0323, areaghiacc)
+plot(forni0323d)
+
+# visualizziamo in colori naturali e in NIR come rosso
+plotRGB(forni0323d, r=4, g=3, b=2, stretch="lin")
+plotRGB(forni0323d, r=5, g=4, b=3, stretch="lin")
+
+# rifacciamo il procedimento con le altre foto scaricate
+#immagine settembre 2023
+rlist0923 <- list.files(pattern="LC08_L2SP_193028_20230907_20230912_02_T1_SR_B")
+rlist0923
+import0923 <- lapply(rlist0923, raster)
+import0923
+forni0923 <- stack(import0923)
+forni0923
+
+plot(forni0923)
+plotRGB(forni0923, r=4, g=3, b=2, stretch="hist")
+
+fornicut0923 <- crop(forni0923, areaghiacc)
+fornicut0923
+plot(fornicut0923)
+plotRGB(fornicut0923, r=4, g=3, b=2, stretch="lin")
+plotRGB(fornicut0923, r=5, g=4, b=3, stretch="lin")
+
+forni0923d <- mask(fornicut0923, areaghiacc)
+plot(forni0923d)
+plotRGB(forni0923d, r=4, g=3, b=2, stretch="lin")
+plotRGB(forni0923d, r=5, g=4, b=3, stretch="lin")
+
+#immagine marzo 2009
+rlist0309 <- list.files(pattern="LE07_L2SP_193028_20090316_20200912_02_T1_SR_B")
+rlist0309
+import0309 <- lapply(rlist0309, raster)
+import0309
+forni0309 <- stack(import0309)
+forni0309
+
+#Landsat 7 -> b=1, g=2, r=3, NIR=4
+plot(forni0309)
+plotRGB(forni0309, r=3, g=2, b=1, stretch="lin") #si vede meglio con hist
+
+fornicut0309 <- crop(forni0309, areaghiacc)
+fornicut0309
+plot(fornicut0309)
+plotRGB(fornicut0309, r=3, g=2, b=1, stretch="hist")
+plotRGB(fornicut0309, r=4, g=3, b=2, stretch="hist")
+
+forni0309d <- mask(fornicut0309, areaghiacc)
+plot(forni0309d)
+plotRGB(forni0309d, r=3, g=2, b=1, stretch="lin")
+plotRGB(forni0309d, r=4, g=3, b=2, stretch="lin")
+
+#landsat 7 presenta limitazioni/problemi (stripes, colori di difficile interpretazione e difficili da confrontare)
+#usiamo immagini da Landsat 8, meglio confrontabili, a costo di fare un'analisi riferita a un periodo temporale minore
+
+#immagine marzo 2017
+rlist0317 <- list.files(pattern="LC08_L2SP_193028_20170330_20200904_02_T1_SR_B")
+rlist0317
+import0317 <- lapply(rlist0317, raster)
+import0317
+forni0317 <- stack(import0317)
+forni0317
+
+plot(forni0317)
+plotRGB(forni0317, r=4, g=3, b=2, stretch="lin")
+
+fornicut0317 <- crop(forni0317, areaghiacc)
+fornicut0317
+plot(fornicut0317)
+plotRGB(fornicut0317, r=4, g=3, b=2, stretch="lin")
+plotRGB(fornicut0317, r=5, g=4, b=3, stretch="lin")
+
+forni0317d <- mask(fornicut0317, areaghiacc)
+plot(forni0317d)
+plotRGB(forni0317d, r=4, g=3, b=2, stretch="lin")
+plotRGB(forni0317d, r=5, g=4, b=3, stretch="lin")
+
+#immagine settembre 2017
+rlist0917 <- list.files(pattern="LC08_L2SP_193028_20170922_20200903_02_T1_SR_B")
+rlist0917
+import0917 <- lapply(rlist0917, raster)
+import0917
+forni0917 <- stack(import0917)
+forni0917
+
+plot(forni0917)
+plotRGB(forni0917, r=4, g=3, b=2, stretch="hist")
+
+fornicut0917 <- crop(forni0917, areaghiacc)
+fornicut0917
+plot(fornicut0917)
+plotRGB(fornicut0917, r=4, g=3, b=2, stretch="lin")
+plotRGB(fornicut0917, r=5, g=4, b=3, stretch="lin")
+
+forni0917d <- mask(fornicut0917, areaghiacc)
+plot(forni0917d)
+plotRGB(forni0917d, r=4, g=3, b=2, stretch="lin")
+plotRGB(forni0917d, r=5, g=4, b=3, stretch="lin")
+
+#visualizzazione in colori naturali delle quattro immagini scaricate
+par(mfrow=c(2, 2))
+plotRGB(forni0317d, r=4, g=3, b=2, stretch="lin")
+plotRGB(forni0323d, r=4, g=3, b=2, stretch="lin")
+plotRGB(forni0917d, r=4, g=3, b=2, stretch="lin")
+plotRGB(forni0923d, r=4, g=3, b=2, stretch="lin")
+
+#visualizzazione in NIR come rosso delle quattro immagini scaricate
+par(mfrow=c(2, 2))
+plotRGB(forni0317d, r=5, g=4, b=3, stretch="lin")
+plotRGB(forni0323d, r=5, g=4, b=3, stretch="lin")
+plotRGB(forni0917d, r=5, g=4, b=3, stretch="lin")
+plotRGB(forni0923d, r=5, g=4, b=3, stretch="lin")
+
+#DVI and NDVI
+# immagine settembre 2023
+dvi0923 <- forni0923d[[5]]-forni0923d[[4]]
+dvi0923
+ndvi0923 <- dvi0923/(forni0923d[[5]]+forni0923d[[4]])
+ndvi0923
+
+# immagine marzo 2023
+dvi0323 <- forni0323d[[5]]-forni0323d[[4]]
+dvi0323
+ndvi0323 <- dvi0323/(forni0323d[[5]]+forni0323d[[4]])
+ndvi0323
+
+# immagine settembre 2017
+dvi0917 <- forni0917d[[5]]-forni0917d[[4]]
+dvi0917
+ndvi0917 <- dvi0917/(forni0917d[[5]]+forni0917d[[4]])
+ndvi0917
+
+# immagine marzo 2017
+dvi0317 <- forni0317d[[5]]-forni0317d[[4]]
+dvi0317
+ndvi0317 <- dvi0317/(forni0317d[[5]]+forni0317d[[4]])
+ndvi0317
+
+par(mfrow=c(2, 2))
+plot(ndvi0317, col=viridis(200, option="F")) #rocket
+plot(ndvi0323, col=viridis(200, option="F")) 
+plot(ndvi0917, col=viridis(200, option="F")) 
+plot(ndvi0923, col=viridis(200, option="F"))
+
+#calcolo del NDGI "Normalized Difference Glacier Index"
+# green - red/ green + red
+ndgi0923 <- (forni0923d[[3]]-forni0923d[[4]])/(forni0923d[[3]]+forni0923d[[4]])
+ndgi0923
+
+ndgi0323 <- (forni0323d[[3]]-forni0323d[[4]])/(forni0323d[[3]]+forni0323d[[4]])
+ndgi0323
+
+ndgi0917 <- (forni0917d[[3]]-forni0917d[[4]])/(forni0917d[[3]]+forni0917d[[4]])
+ndgi0917
+
+ndgi0317 <- (forni0317d[[3]]-forni0317d[[4]])/(forni0317d[[3]]+forni0317d[[4]])
+ndgi0317
+
+par(mfrow=c(2, 2))
+plot(ndgi0317, col=viridis(200, option="G")) #mako
+plot(ndgi0323, col=viridis(200, option="G")) 
+plot(ndgi0917, col=viridis(200, option="G")) 
+plot(ndgi0923, col=viridis(200, option="G")) 
+
+#calcolo del NDSI "Normalized Difference Snow Index"
+#green - SWIR 1 / green + SWIR 1
+ndsi0923 <- (forni0923d[[3]]-forni0923d[[6]])/(forni0923d[[3]]+forni0923d[[6]])
+ndsi0923
+
+ndsi0323 <- (forni0323d[[3]]-forni0323d[[6]])/(forni0323d[[3]]+forni0323d[[6]])
+ndsi0323
+
+ndsi0917 <- (forni0917d[[3]]-forni0917d[[6]])/(forni0917d[[3]]+forni0917d[[6]])
+ndsi0917
+
+ndsi0317 <- (forni0317d[[3]]-forni0317d[[6]])/(forni0317d[[3]]+forni0317d[[6]])
+ndsi0317
+
+par(mfrow=c(2, 2))
+plot(ndsi0317, col=viridis(200, option="G")) #mako
+plot(ndsi0323, col=viridis(200, option="G")) 
+plot(ndsi0917, col=viridis(200, option="G")) 
+plot(ndsi0923, col=viridis(200, option="G")) 
+
+
+#NDSII
+ndsii0923 <- (forni0923d[[3]]-forni0923d[[5]])/(forni0923d[[3]]+forni0923d[[5]])
+ndsi0923
+
+ndsii0323 <- (forni0323d[[3]]-forni0323d[[5]])/(forni0323d[[3]]+forni0323d[[5]])
+ndsii0323
+
+ndsii0917 <- (forni0917d[[3]]-forni0917d[[5]])/(forni0917d[[3]]+forni0917d[[5]])
+ndsii0917
+
+ndsii0317 <- (forni0317d[[3]]-forni0317d[[5]])/(forni0317d[[3]]+forni0317d[[5]])
+ndsii0317
+
+par(mfrow=c(2, 2))
+plot(ndsii0317, col=viridis(200, option="G")) #mako
+plot(ndsii0323, col=viridis(200, option="G")) 
+plot(ndsii0917, col=viridis(200, option="G")) 
+plot(ndsii0923, col=viridis(200, option="G")) 
+
+#CLASSIIFCAZIONE
+class0317 <- unsuperClass(forni0317d, nClasses=3) 
+class0317
+class0917 <- unsuperClass(forni0917d, nClasses=3) 
+class0917
+class0323 <- unsuperClass(forni0323d, nClasses=3) 
+class0323
+class0923 <- unsuperClass(forni0923d, nClasses=3) 
+class0923
+
+par(mfrow=c(2, 2))
+plot(class0317$map, col=viridis(4, option="E")) #cividis
+plot(class0323$map, col=viridis(4, option="E")) 
+plot(class0917$map, col=viridis(4, option="E")) 
+plot(class0923$map, col=viridis(4, option="E")) 
+
+
+par(mfrow=c(2, 2))
+plot(class0917$map, col=viridis(4, option="E")) 
+plot(class0923$map, col=viridis(4, option="E"))
+plotRGB(forni0917d, r=4, g=3, b=2, stretch="lin")
+plotRGB(forni0923d, r=4, g=3, b=2, stretch="lin")
+
+freq(class0317$map)
+# Classe 1= neve  -> 322094
+# Classe 2= neve sporca -> 322538
+# Classe 3= vegetazione -> 624531
+
+freq(class0917$map)
+# Classe 1= neve sporca  -> 127160
+# Classe 2= neve -> 86587
+# Classe 3= vegetazione -> 1049876
+
+freq(class0323$map)
+# Classe 1= vegetazione  -> 536864
+# Classe 2= neve -> 427253
+# Classe 3= neve sporca -> 304895
+
+freq(class0923$map)
+# Classe 1= suolo nudo  -> 580055
+# Classe 2= vegetazione -> 656436
+# Classe 3= neve -> 31566
+
+
+#numero totale di px
+# è uguale per tutti 
+
+forni0317d
+tot0317 <- 2173908
+forni0917d
+tot0917 <- 2173908
+forni0323d
+tot0323 <- 2173908
+forni0923d
+tot0923 <- 2173908
+
+#  % neve-ghiaccio
+
+ice0317 <- (322094+322538)/tot0317*100 
+ice0317
+# 29.65314
+ice0917 <- (127160+86587)/tot0917*100 
+ice0917
+#9.832385
+ice0323 <- (427253+304895)/tot0323*100 
+ice0323
+#33.67889
+ice0923 <- (31566)/tot0923*100 
+ice0923
+#1.452039
+
+#  % vegetazione
+
+veg0317 <- (624531)/tot0317*100 
+veg0317
+# 28.72849
+veg0917 <- (1049876)/tot0917*100 
+veg0917
+#48.29441
+veg0323 <- (536864)/tot0323*100 
+veg0323
+#24.6958
+veg0923 <- (656436+580055)/tot0923*100 
+veg0923
+#56.87872
+
+#plotto con le classificazioni
+par(mfrow=c(2, 2))
+plotRGB(forni0317d, r=5, g=4, b=3, stretch="lin")
+plotRGB(forni0323d, r=5, g=4, b=3, stretch="lin")
+plotRGB(forni0917d, r=5, g=4, b=3, stretch="lin")
+plotRGB(forni0923d, r=5, g=4, b=3, stretch="lin")
+
+# DATAFRAME
+classi <- c("Neve%", "Vegetazione%") # Prima colonna
+perc0317 <- c(29.65314, 28.72849 )# Seconda colonna
+perc0917 <- c(9.832385, 48.29441) # Terza colonna
+perc0323 <- c(33.67889, 24.6958 ) # Quarta colonna
+perc0923 <- c(1.452039, 56.87872 ) # Quinta colonna
+multitemporal_conf <- data.frame(classi, perc0317, perc0917, perc0323, perc0923 )
+View(multitemporal_conf)
+
+Anni <- c("marzo 2017", "settembre 2017", "marzo 2023", "settembre 2023") # Prima colonna
+PercNeve <- c(29.65314, 9.832385, 33.67889, 1.452039 ) # Seconda colonna
+PercVegetazione <- c(28.72849, 48.29441, 24.6958, 56.87872) # Terza colonna
+
+multitemporal1 <- data.frame(Anni, PercNeve, PercVegetazione)
+View(multitemporal1)
+
+# DATAFRAME PER BARCHART combinato
+Anno <- c("marzo 2017", "marzo 2017", "settembre 2017", "settembre 2017", "marzo 2023", "marzo 2023", "settembre 2023", "settembre 2023") # Prima colonna
+Percentuali <- c(29.65314, 28.72849, 9.832385, 48.29441, 33.67889, 24.6958, 1.452039, 56.87872) # Seconda colonna
+Tipo_copertura <- c("Neve", "Vegetazione", "Neve", "Vegetazione", "Neve", "Vegetazione", "Neve", "Vegetazione") # Terza colonna
+multitemporal2 <- data.frame(Anno, Percentuali, Tipo_copertura)
+View(multitemporal2)
+
+# BARCHART neve nei 4 anni
+ggplot(multitemporal1, aes(x=Anni, y=PercNeve, col=Mesi))+
+  geom_bar(stat="identity", fill="white")
+
+# BARCHART vegetazione nei 4 mesi
+ggplot(multitemporal1, aes(x=Mesi, y=PercVegetazione, col=Mesi))+
+  geom_bar(stat="identity", fill="white")
+
+# BARCHART a colonnne multiple per i 4 mesi 
+ggplot(multitemporal2, aes(x=Anno, y=Percentuali, col=Tipo_copertura))+
+  geom_bar(stat="identity", fill="white") # Colonne sovrapposte
+
+bordo_barplot <- c("Neve" = "lightblue", "Vegetazione" = "darkgreen")
+
+ggplot(multitemporal2, aes(x=Anno, y=Percentuali, col=Tipo_copertura))+
+  geom_bar(stat="identity", position="dodge", fill="white",aes(color = Tipo_copertura)) +
+  scale_color_manual(values = bordo_barplot) # Colonne affiancate
+
+
+
+#Faccio lo stesso procedimento sull'area dell'ADAMELLO al fine di comparare i risultati 
+adamello <- st_read("adamello.shp")
+adamello
+
+# marzo 2017
+adamellocut0317 <- crop(forni0317, adamello)
+adamellocut0317
+plot(adamellocut0317)
+plotRGB(adamellocut0317, r=4, g=3, b=2, stretch="lin")
+plotRGB(adamellocut0317, r=5, g=4, b=3, stretch="lin")
+
+adam0317d <- mask(adamellocut0317, adamello)
+plot(adam0317d)
+plotRGB(adam0317d, r=4, g=3, b=2, stretch="lin")
+plotRGB(adam0317d, r=5, g=4, b=3, stretch="lin")
+
+# marzo 2023
+adamellocut0323 <- crop(forni0323, adamello)
+adamellocut0323
+plot(adamellocut0323)
+plotRGB(adamellocut0323, r=4, g=3, b=2, stretch="lin")
+plotRGB(adamellocut0323, r=5, g=4, b=3, stretch="lin")
+
+adam0323d <- mask(adamellocut0323, adamello)
+plot(adam0323d)
+par(mfrow=c(1, 2))
+plotRGB(adam0323d, r=4, g=3, b=2, stretch="lin")
+plotRGB(adam0323d, r=5, g=4, b=3, stretch="lin")
+
+# settembre 2023
+adamellocut0923 <- crop(forni0923, adamello)
+adamellocut0923
+plot(adamellocut0923)
+plotRGB(adamellocut0923, r=4, g=3, b=2, stretch="lin")
+plotRGB(adamellocut0923, r=5, g=4, b=3, stretch="lin")
+
+adam0923d <- mask(adamellocut0923, adamello)
+plot(adam0923d)
+par(mfrow=c(1, 2))
+plotRGB(adam0923d, r=4, g=3, b=2, stretch="lin")
+plotRGB(adam0923d, r=5, g=4, b=3, stretch="lin")
+
+
+# settembre 2017
+adamellocut0917 <- crop(forni0917, adamello)
+adamellocut0917
+plot(adamellocut0917)
+plotRGB(adamellocut0917, r=4, g=3, b=2, stretch="lin")
+plotRGB(adamellocut0917, r=5, g=4, b=3, stretch="lin")
+
+adam0917d <- mask(adamellocut0917, adamello)
+plot(adam0917d)
+par(mfrow=c(1, 2))
+plotRGB(adam0917d, r=4, g=3, b=2, stretch="lin")
+plotRGB(adam0917d, r=5, g=4, b=3, stretch="lin")
+
+par(mfrow=c(2, 2))
+plotRGB(adam0317d, r=4, g=3, b=2, stretch="lin")
+plotRGB(adam0323d, r=4, g=3, b=2, stretch="lin")
+plotRGB(adam0917d, r=4, g=3, b=2, stretch="lin")
+plotRGB(adam0923d, r=4, g=3, b=2, stretch="lin")
+
+adam0317d
+adam0323d
+adam0917d
+adam0923d
+
+#DVI and NDVI
+# immagine settembre 2023
+adam_dvi0923 <- adam0923d[[5]]-adam0923d[[4]]
+adam_dvi0923
+adam_ndvi0923 <- adam_dvi0923/(adam0923d[[5]]+adam0923d[[4]])
+adam_ndvi0923
+
+# immagine marzo 2023
+adam_dvi0323 <- adam0323d[[5]]-adam0323d[[4]]
+adam_dvi0323
+adam_ndvi0323 <- adam_dvi0323/(adam0323d[[5]]+adam0323d[[4]])
+adam_ndvi0323
+
+# immagine settembre 2017
+adam_dvi0917 <- adam0917d[[5]]-adam0917d[[4]]
+adam_dvi0917
+adam_ndvi0917 <- adam_dvi0917/(adam0917d[[5]]+adam0917d[[4]])
+adam_ndvi0917
+
+# immagine marzo 2017
+adam_dvi0317 <- adam0317d[[5]]-adam0317d[[4]]
+adam_dvi0317
+adam_ndvi0317 <- adam_dvi0317/(adam0317d[[5]]+adam0317d[[4]])
+adam_ndvi0317
+
+par(mfrow=c(2, 2))
+plot(adam_ndvi0317, col=viridis(200, option="F")) #rocket
+plot(adam_ndvi0323, col=viridis(200, option="F")) #rocket
+plot(adam_ndvi0917, col=viridis(200, option="F")) #rocket
+plot(adam_ndvi0923, col=viridis(200, option="F")) #rocket
+
+#NDSI
+adam_ndsi0923 <- (adam0923d[[3]]-adam0923d[[6]])/(adam0923d[[3]]+adam0923d[[6]])
+adam_ndsi0923
+
+adam_ndsi0323 <- (adam0323d[[3]]-adam0323d[[6]])/(adam0323d[[3]]+adam0323d[[6]])
+adam_ndsi0323
+
+adam_ndsi0917 <- (adam0917d[[3]]-adam0917d[[6]])/(adam0917d[[3]]+adam0917d[[6]])
+adam_ndsi0917
+
+adam_ndsi0317 <- (adam0317d[[3]]-adam0317d[[6]])/(adam0317d[[3]]+adam0317d[[6]])
+adam_ndsi0317
+
+par(mfrow=c(2, 2))
+plot(adam_ndsi0317, col=viridis(200, option="G")) #mako
+plot(adam_ndsi0323, col=viridis(200, option="G")) 
+plot(adam_ndsi0917, col=viridis(200, option="G")) 
+plot(adam_ndsi0923, col=viridis(200, option="G")) 
+
+#CLASSIIFCAZIONE
+
+a_class0317 <- unsuperClass(adam0317d, nClasses=3) 
+a_class0317
+a_class0917 <- unsuperClass(adam0917d, nClasses=3) 
+a_class0917
+a_class0323 <- unsuperClass(adam0323d, nClasses=3) 
+a_class0323
+a_class0923 <- unsuperClass(adam0923d, nClasses=3) 
+a_class0923
+
+par(mfrow=c(2, 2))
+plot(a_class0317$map, col=viridis(4, option="E")) #
+plot(a_class0323$map, col=viridis(4, option="E")) 
+plot(a_class0917$map, col=viridis(4, option="E")) 
+plot(a_class0923$map, col=viridis(4, option="E"))  
+
+freq(a_class0317$map)
+# Classe 1= neve sporca -> 206219
+# Classe 2= neve -> 194899
+# Classe 3= vegetazione -> 648189
+
+freq(a_class0917$map)
+# Classe 1= suolo nudo  -> 392580
+# Classe 2= neve -> 55859
+# Classe 3= vegetazione -> 604157
+
+freq(a_class0323$map)
+# Classe 1= vegetazione  -> 568023
+# Classe 2= neve sporca -> 215780
+# Classe 3= neve -> 268153
+
+freq(a_class0923$map)
+# Classe 1= suolo nudo  -> 436910
+# Classe 2= neve -> 23057
+# Classe 3= vegetazione -> 592149
+
+
+#numero totale di px
+# è uguale per tutti 
+
+adam0317d
+tot_adam0317 <- 2306484
+adam0917d
+tot_adam0917 <- 2306484
+adam0323d
+tot_adam0323 <- 2306484
+adam0923d
+tot_adam0923 <- 2306484
+
+#  % neve-ghiaccio
+
+ice_adam0317 <- (206219+194899)/tot_adam0317*100 
+ice_adam0317
+# 17.39089
+ice_adam0917 <- (55859)/tot_adam0917*100 
+ice_adam0917
+#2.421825
+ice_adam0323 <- (215780+268153)/tot_adam0323*100 
+ice_adam0323
+#20.98142
+ice_adam0923 <- (23057)/tot_adam0923*100 
+ice_adam0923
+#0.9996601
+
+
+#  % vegetazione
+veg_adam0317 <- (648189)/tot_adam0317*100 
+veg_adam0317
+# 28.1029
+veg_adam0917 <- (604157+392580)/tot_adam0917*100 
+veg_adam0917
+#43.21456
+veg_adam0323 <- (568023)/tot_adam0323*100 
+veg_adam0323
+#24.62722
+veg_adam0923 <- (436910+592149)/tot_adam0923*100 
+veg_adam0923
+#44.61592
+
+
+# DATAFRAME
+classi <- c("Neve%", "Vegetazione%") # Prima colonna
+perc_adam0317 <- c(17.39089, 28.1029 )# Seconda colonna
+perc_adam0917 <- c(2.421825, 43.21456) # Terza colonna
+perc_adam0323 <- c(20.98142, 24.62722 ) # Quarta colonna
+perc_adam0923 <- c(0.9996601, 44.61592) # Quinta colonna
+multitemporal_conf_a <- data.frame(classi, perc_adam0317, perc_adam0917, perc_adam0323, perc_adam0923)
+View(multitemporal_conf_a)
+
+Anni <- c("marzo 2017", "settembre 2017", "marzo 2023", "settembre 2023") # Prima colonna
+PercNeve <- c(17.39089,2.421825 , 20.98142, 0.9996601 ) # Seconda colonna
+PercVegetazione <- c(28.1029, 43.21456, 24.62722, 44.61592) # Terza colonna
+
+multitemporal1_a <- data.frame(Anni, PercNeve, PercVegetazione)
+View(multitemporal1_a)
+
+# DATAFRAME PER BARCHART combinato
+Anno <- c("marzo 2017", "marzo 2017", "settembre 2017", "settembre 2017", "marzo 2023", "marzo 2023", "settembre 2023", "settembre 2023") # Prima colonna
+Percentuali <- c(17.39089, 28.1029, 2.421825, 43.21456, 20.98142, 24.62722, 0.9996601, 44.61592 ) # Seconda colonna
+Tipo_copertura <- c("Neve", "Vegetazione", "Neve", "Vegetazione", "Neve", "Vegetazione", "Neve", "Vegetazione") # Terza colonna
+multitemporal2_a <- data.frame(Anno, Percentuali, Tipo_copertura)
+View(multitemporal2_a)
+
+# BARCHART neve nei 4 anni
+ggplot(multitemporal1_a, aes(x=Anno, y=PercNeve, col=Anno))+
+  geom_bar(stat="identity", fill="white")
+
+# BARCHART vegetazione nei 4 mesi
+ggplot(multitemporal1_a, aes(x=Anno, y=PercVegetazione, col=Anno))+
+  geom_bar(stat="identity", fill="white")
+
+bordo_barplot <- c("Neve" = "lightblue", "Vegetazione" = "darkgreen")
+
+# BARCHART a colonnne multiple per i 4 mesi
+ggplot(multitemporal2_a, aes(x=Anno, y=Percentuali, col=Tipo_copertura))+
+  geom_bar(stat="identity", position="dodge", fill="white", aes(color = Tipo_copertura)) +
+  scale_color_manual(values = bordo_barplot)
+  # Colonne affiancate
+
+
+# MISURE DI ETEROGENEITà: PCA
+# Area ghiacciaio dei Forni
+# Resample, per rendere più veloci le esecuzioni successive
+forni0917dres <- aggregate(forni0917d, fact=5)
+forni0923dres <- aggregate(forni0923d, fact=5)
+# PCA
+pca_forni17 <- rasterPCA(forni0917dres) # settembre 2017
+pca_forni23 <- rasterPCA(forni0923dres) # settembre2023
+pca_forni17
+pca_forni23
+summary(pca_forni17$model) # La PC1 (2017) spiega il  92.64%  della variabilità del sistema
+summary(pca_forni23$model) # La PC1 (2023) spiega il 56.92% della variabilità del sistema      !!!!!
+
+plot(pca_forni17$map)
+plot(pca_forni23$map)
+# Si associa ciascuna PC1 a un oggetto, per facilitare i passaggi successivi
+pc1_17 <- pca_forni17$map$PC1
+pc1_23 <- pca_forni23$map$PC1
+# Plot della PC1 per il 2013 (dx) e per il 2022 (sx), con palette plasma
+par(mfrow=c(1,2))
+plot(pc1_17, col=viridis(200, option="C"))
+plot(pc1_23, col=viridis(200, option="C")) 
+# La variabilità è ben evidenziata da entrambi i plot
+# Calcolo della variabilità su PC1 (tale calcolo è possibile effettuarlo su un solo layer), moving window 3x3
+sdpc1_17 <- focal(pc1_17, matrix(1/9, 3, 3), fun=sd)
+sdpc1_17
+sdpc1_23 <- focal(pc1_23, matrix(1/9, 3, 3), fun=sd) 
+sdpc1_23
+# pdf("confronto_variabilità_PC1.pdf", height=4)
+par(mfrow=c(1,2))
+plot(sdpc1_17, col=viridis(200, option="B"))
+plot(sdpc1_23, col=viridis(200, option="B"))
+
+# MISURE DI ETEROGENEITà: PCA
+# Area ghiacciaio Adamello
+adam0917d
+adam0923d
+
+adam0917dres <- aggregate(adam0917d, fact=5)
+adam0923dres <- aggregate(adam0923d, fact=5)
+# PCA
+pca_adam17 <- rasterPCA(adam0917dres) # settembre 2017
+pca_adam23 <- rasterPCA(adam0923dres) # settembre2023
+pca_adam17
+pca_adam23
+summary(pca_adam17$model) # La PC1 (2017) spiega il  87.61%  della variabilità del sistema
+summary(pca_adam23$model) # La PC1 (2023) spiega il 63,15% della variabilità del sistema
+
+plot(pca_adam17$map)
+plot(pca_adam23$map)
+# Si associa ciascuna PC1 a un oggetto, per facilitare i passaggi successivi
+pc1_a17 <- pca_adam17$map$PC1
+pc1_a23 <- pca_adam23$map$PC1
+# Plot della PC1 per il 2013 (dx) e per il 2022 (sx), con palette plasma
+par(mfrow=c(1,2))
+plot(pc1_a17, col=viridis(200, option="C"))
+plot(pc1_a23, col=viridis(200, option="C")) 
+# La variabilità è ben evidenziata da entrambi i plot
+# Calcolo della variabilità su PC1 (tale calcolo è possibile effettuarlo su un solo layer), moving window 3x3
+sdpc1_a17 <- focal(pc1_a17, matrix(1/9, 3, 3), fun=sd)
+sdpc1_a17
+sdpc1_a23 <- focal(pc1_a23, matrix(1/9, 3, 3), fun=sd) 
+sdpc1_a23
+# pdf("confronto_variabilità_PC1.pdf", height=4)
+par(mfrow=c(1,2))
+plot(sdpc1_a17, col=viridis(200, option="B"))
+plot(sdpc1_a23, col=viridis(200, option="B"))
+
+#confronto PC1 tra Forni e Adamello
+par(mfrow=c(2,2))
+plot(sdpc1_17, col=viridis(200, option="B"))
+plot(sdpc1_23, col=viridis(200, option="B"))
+plot(sdpc1_a17, col=viridis(200, option="B"))
+plot(sdpc1_a23, col=viridis(200, option="B"))
+
+#Confronto l'indice NDSI per i periodi estivi delle due aree esaminate
+par(mfrow=c(2,2))
+plot(ndsi0917, col=viridis(200, option="G")) 
+plot(ndsi0923, col=viridis(200, option="G")) 
+plot(adam_ndsi0917, col=viridis(200, option="G")) 
+plot(adam_ndsi0923, col=viridis(200, option="G")) 
+
+# DATAFRAME per confronto estati tra le due aree
+#valutazione sulla perdita di copertura di ghiaccio neve 
+classi <- c("Neve%", "Vegetazione%") # Prima colonna
+perc0917 <- c(9.832385, 48.29441) # Terza colonna
+perc0923 <- c(1.452039, 56.87872 ) # Quinta colonna
+perc_adam0917 <- c(2.421825, 43.21456) # Terza colonna
+perc_adam0923 <- c(0.9996601, 44.61592) # Quinta colonna
+multitemporal_conf_fa <- data.frame(classi, perc0917, perc0923, perc_adam0917, perc_adam0923)
+View(multitemporal_conf_fa)
+
+Anni <- c("Ortles 09-2017", "Ortles 09-2023", " Adamello 09-2017", " Adamello 09-2023") # Prima colonna
+PercNeve <- c(9.832385, 1.452039, 2.421825, 0.9996601) # Seconda colonna
+PercVegetazione <- c(48.29441, 56.87872, 43.21456, 44.61592) # Terza colonna
+
+multitemporal_fa <- data.frame(Anni, PercNeve, PercVegetazione)
+View(multitemporal_fa)
+
+ggplot(multitemporal_fa, aes(x=Anni, y=PercNeve, col=Anni))+
+  geom_bar(stat="identity", fill="white")
+
 
