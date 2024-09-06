@@ -704,35 +704,51 @@ ggplot(multitemporal2_a, aes(x=Anno, y=Percentuali, col=Tipo_copertura))+
   scale_color_manual(values = bordo_barplot)
   # Colonne affiancate
 
-
-# MISURE DI ETEROGENEITà: PCA
+# MISURE DI ETEROGENEITÀ: PCA
 # Area ghiacciaio dei Forni
+# Ridimensionamento dell'immagine per velocizzare le esecuzioni successive
+# Aggrega l'immagine a una risoluzione più bassa, riducendo il numero di pixel
 # Resample, per rendere più veloci le esecuzioni successive
 forni0917dres <- aggregate(forni0917d, fact=5)
 forni0923dres <- aggregate(forni0923d, fact=5)
-# PCA
-pca_forni17 <- rasterPCA(forni0917dres) # settembre 2017
-pca_forni23 <- rasterPCA(forni0923dres) # settembre2023
+
+# Calcolo della PCA
+# PCA per settembre 2017
+pca_forni17 <- rasterPCA(forni0917dres) 
+# PCA per settembre 2023
+pca_forni23 <- rasterPCA(forni0923dres) 
+# Visualizzazione dei risultati della PCA
 pca_forni17
 pca_forni23
-summary(pca_forni17$model) # La PC1 (2017) spiega il  92.64%  della variabilità del sistema
-summary(pca_forni23$model) # La PC1 (2023) spiega il 56.92% della variabilità del sistema      !!!!!
 
+# riepilogo delle statistiche relative alle componenti principali ottenute dall'analisi.
+summary(pca_forni17$model) # La PC1 (2017) spiega il  92.64%  della variabilità del sistema
+summary(pca_forni23$model) # La PC1 (2023) spiega il 56.92% della variabilità del sistema 
+
+# Plot delle mappe delle componenti principali
 plot(pca_forni17$map)
 plot(pca_forni23$map)
-# Si associa ciascuna PC1 a un oggetto, per facilitare i passaggi successivi
+# Associazione delle componenti principali (PC1) a variabili per facilitare i passaggi successivi
 pc1_17 <- pca_forni17$map$PC1
 pc1_23 <- pca_forni23$map$PC1
-# Plot della PC1 per il 2013 (dx) e per il 2022 (sx), con palette plasma
+
+# Plot delle componenti principali PC1 per settembre 2017 e settembre 2023 con palette C di viridis (plasma)
+par(mfrow=c(1,2))
 par(mfrow=c(1,2))
 plot(pc1_17, col=viridis(200, option="C"))
 plot(pc1_23, col=viridis(200, option="C")) 
-# La variabilità è ben evidenziata da entrambi i plot
-# Calcolo della variabilità su PC1 (tale calcolo è possibile effettuarlo su un solo layer), moving window 3x3
+
+# Calcolo della variabilità della PC1 utilizzando una finestra mobile 3x3
+# Questo aiuta a capire l'eterogeneità locale nella variabilità della PC1
 sdpc1_17 <- focal(pc1_17, matrix(1/9, 3, 3), fun=sd)
 sdpc1_17
 sdpc1_23 <- focal(pc1_23, matrix(1/9, 3, 3), fun=sd) 
 sdpc1_23
+
+
+
+# Plot della variabilità della PC1 per settembre 2017 e settembre 2023
+# Le mappe mostrano la variabilità spaziale della PC1
 # pdf("confronto_variabilità_PC1.pdf", height=4)
 par(mfrow=c(1,2))
 plot(sdpc1_17, col=viridis(200, option="B"))
