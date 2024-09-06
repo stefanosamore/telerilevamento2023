@@ -733,8 +733,7 @@ pc1_17 <- pca_forni17$map$PC1
 pc1_23 <- pca_forni23$map$PC1
 
 # Plot delle componenti principali PC1 per settembre 2017 e settembre 2023 con palette C di viridis (plasma)
-par(mfrow=c(1,2))
-par(mfrow=c(1,2))
+par(mfrow=c(1,2))# Configura il layout per due grafici affiancati
 plot(pc1_17, col=viridis(200, option="C"))
 plot(pc1_23, col=viridis(200, option="C")) 
 
@@ -745,22 +744,20 @@ sdpc1_17
 sdpc1_23 <- focal(pc1_23, matrix(1/9, 3, 3), fun=sd) 
 sdpc1_23
 
-
-
 # Plot della variabilità della PC1 per settembre 2017 e settembre 2023
 # Le mappe mostrano la variabilità spaziale della PC1
-# pdf("confronto_variabilità_PC1.pdf", height=4)
 par(mfrow=c(1,2))
-plot(sdpc1_17, col=viridis(200, option="B"))
+plot(sdpc1_17, col=viridis(200, option="B")) # utilizzando la palette "B" (inferno) di viridis
 plot(sdpc1_23, col=viridis(200, option="B"))
 
 # MISURE DI ETEROGENEITà: PCA
 # Area ghiacciaio Adamello
+# seguo esattamente gli stessi passaggi descritti sopra
 adam0917d
 adam0923d
-
 adam0917dres <- aggregate(adam0917d, fact=5)
 adam0923dres <- aggregate(adam0923d, fact=5)
+
 # PCA
 pca_adam17 <- rasterPCA(adam0917dres) # settembre 2017
 pca_adam23 <- rasterPCA(adam0923dres) # settembre2023
@@ -774,53 +771,67 @@ plot(pca_adam23$map)
 # Si associa ciascuna PC1 a un oggetto, per facilitare i passaggi successivi
 pc1_a17 <- pca_adam17$map$PC1
 pc1_a23 <- pca_adam23$map$PC1
-# Plot della PC1 per il 2013 (dx) e per il 2022 (sx), con palette plasma
+
 par(mfrow=c(1,2))
 plot(pc1_a17, col=viridis(200, option="C"))
 plot(pc1_a23, col=viridis(200, option="C")) 
-# La variabilità è ben evidenziata da entrambi i plot
-# Calcolo della variabilità su PC1 (tale calcolo è possibile effettuarlo su un solo layer), moving window 3x3
+
 sdpc1_a17 <- focal(pc1_a17, matrix(1/9, 3, 3), fun=sd)
 sdpc1_a17
 sdpc1_a23 <- focal(pc1_a23, matrix(1/9, 3, 3), fun=sd) 
 sdpc1_a23
-# pdf("confronto_variabilità_PC1.pdf", height=4)
+
 par(mfrow=c(1,2))
 plot(sdpc1_a17, col=viridis(200, option="B"))
 plot(sdpc1_a23, col=viridis(200, option="B"))
 
-#confronto PC1 tra Forni e Adamello
+# Confronto PC1 tra Forni e Adamello
+# Creazione di una griglia di grafici 2x2 per visualizzare la variabilità della PC1
 par(mfrow=c(2,2))
-plot(sdpc1_17, col=viridis(200, option="B"))
+plot(sdpc1_17, col=viridis(200, option="B")) # palette "B" (inferno) di viridis
 plot(sdpc1_23, col=viridis(200, option="B"))
 plot(sdpc1_a17, col=viridis(200, option="B"))
 plot(sdpc1_a23, col=viridis(200, option="B"))
+# Questo confronto visivo permette di osservare e confrontare la variabilità spaziale della componente principale PC1
+# tra le due aree e tra i due periodi, utilizzando una palette di colori "viridis" per rappresentare la variabilità.
 
-#Confronto l'indice NDSI per i periodi estivi delle due aree esaminate
+# Confronto l'indice NDSI per i periodi estivi delle due aree esaminate
+# Creazione di una griglia di grafici 2x2 per visualizzare l'indice NDSI
 par(mfrow=c(2,2))
+# Plot dell'indice NDSI per settembre 2017 (area Forni)
 plot(ndsi0917, col=viridis(200, option="G")) 
+# Plot dell'indice NDSI per settembre 2023 (area Forni)
 plot(ndsi0923, col=viridis(200, option="G")) 
+# Plot dell'indice NDSI per settembre 2017 (area Adamello)
 plot(adam_ndsi0917, col=viridis(200, option="G")) 
+# Plot dell'indice NDSI per settembre 2023 (area Adamello)
 plot(adam_ndsi0923, col=viridis(200, option="G")) 
+# Questo confronto visivo consente di analizzare le variazioni dell'indice NDSI tra le due aree e tra i due periodi estivi.
 
 # DATAFRAME per confronto estati tra le due aree
-#valutazione sulla perdita di copertura di ghiaccio neve 
-classi <- c("Neve%", "Vegetazione%") # Prima colonna
-perc0917 <- c(9.832385, 48.29441) # Terza colonna
-perc0923 <- c(1.452039, 56.87872 ) # Quinta colonna
-perc_adam0917 <- c(2.421825, 43.21456) # Terza colonna
-perc_adam0923 <- c(0.9996601, 44.61592) # Quinta colonna
+# Creazione di un dataframe per valutare la perdita di copertura di ghiaccio e neve tra le aree Forni e Adamello
+classi <- c("Neve%", "Vegetazione%") # Prima colonna, classi di copertura
+perc0917 <- c(9.832385, 48.29441) # Terza colonna, percentuali per settembre 2017 (Forni)
+perc0923 <- c(1.452039, 56.87872 ) # Quinta colonna, percentuali per settembre 2023 (Forni)
+perc_adam0917 <- c(2.421825, 43.21456) # Terza colonna, percentuali per settembre 2017 (Adamello)
+perc_adam0923 <- c(0.9996601, 44.61592) # Quinta colonna, percentuali per settembre 2023 (Adamello)
+# Creazione del dataframe con i dati
 multitemporal_conf_fa <- data.frame(classi, perc0917, perc0923, perc_adam0917, perc_adam0923)
 View(multitemporal_conf_fa)
+# Questo dataframe consente di confrontare le percentuali di neve e vegetazione tra le due aree per i diversi anni
+# Facilita l'analisi dei cambiamenti nella copertura di ghiaccio e vegetazione.
 
-Anni <- c("Ortles 09-2017", "Ortles 09-2023", " Adamello 09-2017", " Adamello 09-2023") # Prima colonna
-PercNeve <- c(9.832385, 1.452039, 2.421825, 0.9996601) # Seconda colonna
-PercVegetazione <- c(48.29441, 56.87872, 43.21456, 44.61592) # Terza colonna
+# Creazione di un dataframe per il confronto delle percentuali di neve e e vegetazione tra le aree e i periodi
+Anni <- c("Ortles 09-2017", "Ortles 09-2023", " Adamello 09-2017", " Adamello 09-2023") # Prima colonna con i periodi e le aree
+PercNeve <- c(9.832385, 1.452039, 2.421825, 0.9996601) # Seconda colonna con le percentuali di neve
+PercVegetazione <- c(48.29441, 56.87872, 43.21456, 44.61592) # Terza colonna con le percentuali di vegetazione
 
+# Creazione dataframe
 multitemporal_fa <- data.frame(Anni, PercNeve, PercVegetazione)
 View(multitemporal_fa)
+# Visualizzazione del dataframe per controllare i dati
 
+# Creazione di un grafico a barre  per visualizzare le percentuali di neve
+# Specifichiamo che le barre rappresentano le percentuali di neve come valori individuali e hanno uno sfondo bianco.
 ggplot(multitemporal_fa, aes(x=Anni, y=PercNeve, col=Anni))+
-  geom_bar(stat="identity", fill="white")
-
-
+  geom_bar(stat="identity", fill="white") 
