@@ -500,7 +500,7 @@ par(mfrow=c(1, 2))
 plotRGB(adam0917d, r=4, g=3, b=2, stretch="lin")
 plotRGB(adam0917d, r=5, g=4, b=3, stretch="lin")
 
-
+# Plot per la visualizzazione in colori naturali delle quattro immagini scaricate a colori naturali
 par(mfrow=c(2, 2))
 plotRGB(adam0317d, r=4, g=3, b=2, stretch="lin")
 plotRGB(adam0323d, r=4, g=3, b=2, stretch="lin")
@@ -512,59 +512,68 @@ adam0323d
 adam0917d
 adam0923d
 
-#DVI and NDVI
-# immagine settembre 2023
+# Calcolo degli indici spettrali (DVI, NDVI, NDGI, NDSI) per analizzare le condizioni del ghiacciaio
+# DVI = Differenza Vegetation Index, NDVI = Normalized Difference Vegetation Index
+# Immagine settembre 2023
 adam_dvi0923 <- adam0923d[[5]]-adam0923d[[4]]
 adam_dvi0923
 adam_ndvi0923 <- adam_dvi0923/(adam0923d[[5]]+adam0923d[[4]])
 adam_ndvi0923
 
-# immagine marzo 2023
+# Ripetiamo il calcolo per le immagini di altre date
+# Immagine marzo 2023
 adam_dvi0323 <- adam0323d[[5]]-adam0323d[[4]]
 adam_dvi0323
 adam_ndvi0323 <- adam_dvi0323/(adam0323d[[5]]+adam0323d[[4]])
 adam_ndvi0323
 
-# immagine settembre 2017
+# Immagine settembre 2017
 adam_dvi0917 <- adam0917d[[5]]-adam0917d[[4]]
 adam_dvi0917
 adam_ndvi0917 <- adam_dvi0917/(adam0917d[[5]]+adam0917d[[4]])
 adam_ndvi0917
 
-# immagine marzo 2017
+# Immagine marzo 2017
 adam_dvi0317 <- adam0317d[[5]]-adam0317d[[4]]
 adam_dvi0317
 adam_ndvi0317 <- adam_dvi0317/(adam0317d[[5]]+adam0317d[[4]])
 adam_ndvi0317
 
+# Visualizziamo gli indici NDVI
 par(mfrow=c(2, 2))
-plot(adam_ndvi0317, col=viridis(200, option="F")) #rocket
-plot(adam_ndvi0323, col=viridis(200, option="F")) #rocket
-plot(adam_ndvi0917, col=viridis(200, option="F")) #rocket
-plot(adam_ndvi0923, col=viridis(200, option="F")) #rocket
+plot(adam_ndvi0317, col=viridis(200, option="F")) # Visualizzazione con la palette viridis Rocket
+plot(adam_ndvi0323, col=viridis(200, option="F")) 
+plot(adam_ndvi0917, col=viridis(200, option="F")) 
+plot(adam_ndvi0923, col=viridis(200, option="F")) 
 
-#NDSI
+# Calcolo del NDSI (Normalized Difference Snow Index)
+# Formula: (green - SWIR 1) / (green + SWIR 1)
+# Calcolo del NDSI per i dati di settembre 2023
 adam_ndsi0923 <- (adam0923d[[3]]-adam0923d[[6]])/(adam0923d[[3]]+adam0923d[[6]])
+# Visualizzazione del risultato per settembre 2023
 adam_ndsi0923
-
+# Calcolo del NDSI per i dati di marzo 2023
 adam_ndsi0323 <- (adam0323d[[3]]-adam0323d[[6]])/(adam0323d[[3]]+adam0323d[[6]])
 adam_ndsi0323
-
+# Calcolo del NDSI per i dati di settembre 2017
 adam_ndsi0917 <- (adam0917d[[3]]-adam0917d[[6]])/(adam0917d[[3]]+adam0917d[[6]])
 adam_ndsi0917
-
+# Calcolo del NDSI per i dati di marzo 2017 
 adam_ndsi0317 <- (adam0317d[[3]]-adam0317d[[6]])/(adam0317d[[3]]+adam0317d[[6]])
 adam_ndsi0317
 
+# Plot del NDSI
 par(mfrow=c(2, 2))
-plot(adam_ndsi0317, col=viridis(200, option="G")) #mako
+plot(adam_ndsi0317, col=viridis(200, option="G")) # Utilizza la funzione viridis con la palette "G" (Mako)
 plot(adam_ndsi0323, col=viridis(200, option="G")) 
 plot(adam_ndsi0917, col=viridis(200, option="G")) 
 plot(adam_ndsi0923, col=viridis(200, option="G")) 
 
 #CLASSIIFCAZIONE
-
+# Richiediamo di suddividerle in 3 classi (nClasses=3) che rappresentano neve, neve sporca e vegetazione
+# Classificazione per l'immagine di marzo 2017
 a_class0317 <- unsuperClass(adam0317d, nClasses=3) 
+# Mostra il risultato della classificazione
 a_class0317
 a_class0917 <- unsuperClass(adam0917d, nClasses=3) 
 a_class0917
@@ -573,38 +582,43 @@ a_class0323
 a_class0923 <- unsuperClass(adam0923d, nClasses=3) 
 a_class0923
 
+# Visualizzazione delle classificazioni in un layout a 4 grafici, con colori generati dalla palette E di viridis (cividis)
 par(mfrow=c(2, 2))
-plot(a_class0317$map, col=viridis(4, option="E")) #
+plot(a_class0317$map, col=viridis(4, option="E")) 
 plot(a_class0323$map, col=viridis(4, option="E")) 
 plot(a_class0917$map, col=viridis(4, option="E")) 
 plot(a_class0923$map, col=viridis(4, option="E"))  
 
-freq(a_class0317$map)
+# Analisi delle frequenze delle classi ottenute per ciascuna immagine
+# Marzo 2017
+freq(a_class0317$map) # conto dei pixel appartenenti a ciascuna classe
 # Classe 1= neve sporca -> 206219
 # Classe 2= neve -> 194899
 # Classe 3= vegetazione -> 648189
 
+# Settembre 2017
 freq(a_class0917$map)
 # Classe 1= suolo nudo  -> 392580
 # Classe 2= neve -> 55859
 # Classe 3= vegetazione -> 604157
 
+# Marzo 2023
 freq(a_class0323$map)
 # Classe 1= vegetazione  -> 568023
 # Classe 2= neve sporca -> 215780
 # Classe 3= neve -> 268153
 
+# Settembre 2023
 freq(a_class0923$map)
 # Classe 1= suolo nudo  -> 436910
 # Classe 2= neve -> 23057
 # Classe 3= vegetazione -> 592149
 
+# Numero totale di pixel
+# Il numero totale di pixel per ciascuna immagine è lo stesso: 2173908.
 
-#numero totale di px
-# è uguale per tutti 
-
-adam0317d
-tot_adam0317 <- 2306484
+adam0317d # Informazioni sul raster di marzo 2017
+tot_adam0317 <- 2306484 # Numero totale di pixel per l'immagine di marzo 2017
 adam0917d
 tot_adam0917 <- 2306484
 adam0323d
@@ -612,8 +626,8 @@ tot_adam0323 <- 2306484
 adam0923d
 tot_adam0923 <- 2306484
 
-#  % neve-ghiaccio
-
+# Percentuale di copertura neve-ghiaccio
+# Calcolo della percentuale di neve e ghiaccio presente per ciascuna immagine
 ice_adam0317 <- (206219+194899)/tot_adam0317*100 
 ice_adam0317
 # 17.39089
@@ -627,8 +641,8 @@ ice_adam0923 <- (23057)/tot_adam0923*100
 ice_adam0923
 #0.9996601
 
-
-#  % vegetazione
+# Percentuale di vegetazione
+# Calcola della percentuale di vegetazione presente per ciascuna immagine
 veg_adam0317 <- (648189)/tot_adam0317*100 
 veg_adam0317
 # 28.1029
@@ -642,41 +656,49 @@ veg_adam0923 <- (436910+592149)/tot_adam0923*100
 veg_adam0923
 #44.61592
 
-
 # DATAFRAME
-classi <- c("Neve%", "Vegetazione%") # Prima colonna
+# Creazione di un dataframe con le percentuali di neve e vegetazione per ciascuna data di rilevamento
+classi <- c("Neve%", "Vegetazione%") # Prima colonna, nome delle classi di copertura
+# Percentuali di neve e vegetazione per ciascun periodo
 perc_adam0317 <- c(17.39089, 28.1029 )# Seconda colonna
 perc_adam0917 <- c(2.421825, 43.21456) # Terza colonna
 perc_adam0323 <- c(20.98142, 24.62722 ) # Quarta colonna
 perc_adam0923 <- c(0.9996601, 44.61592) # Quinta colonna
+# Creazione del dataframe multitemporale
 multitemporal_conf_a <- data.frame(classi, perc_adam0317, perc_adam0917, perc_adam0323, perc_adam0923)
 View(multitemporal_conf_a)
 
-Anni <- c("marzo 2017", "settembre 2017", "marzo 2023", "settembre 2023") # Prima colonna
-PercNeve <- c(17.39089,2.421825 , 20.98142, 0.9996601 ) # Seconda colonna
-PercVegetazione <- c(28.1029, 43.21456, 24.62722, 44.61592) # Terza colonna
+# DATAFRAME CON LE PERCENTUALI DI NEVE E VEGETAZIONE PER I 4 PERIODI
+# Creazione di un dataframe con le percentuali di neve e vegetazione per i diversi periodi dell'anno
+Anni <- c("marzo 2017", "settembre 2017", "marzo 2023", "settembre 2023") # Prima colonna, periodi di tempo
+PercNeve <- c(17.39089,2.421825 , 20.98142, 0.9996601 ) # Seconda colonna, percentuali di neve
+PercVegetazione <- c(28.1029, 43.21456, 24.62722, 44.61592) # Terza colonna, percentuali di vegetazione
 
-multitemporal1_a <- data.frame(Anni, PercNeve, PercVegetazione)
+# Creazione del dataframe per le percentuali di neve e vegetazione
+al1_a <- data.frame(Anni, PercNeve, PercVegetazione)
 View(multitemporal1_a)
 
 # DATAFRAME PER BARCHART combinato
+# Creazione di un dataframe per la visualizzazione delle percentuali di neve e vegetazione in un unico grafico a barre
 Anno <- c("marzo 2017", "marzo 2017", "settembre 2017", "settembre 2017", "marzo 2023", "marzo 2023", "settembre 2023", "settembre 2023") # Prima colonna
 Percentuali <- c(17.39089, 28.1029, 2.421825, 43.21456, 20.98142, 24.62722, 0.9996601, 44.61592 ) # Seconda colonna
 Tipo_copertura <- c("Neve", "Vegetazione", "Neve", "Vegetazione", "Neve", "Vegetazione", "Neve", "Vegetazione") # Terza colonna
+# Creazione del dataframe per il grafico a barre combinato
 multitemporal2_a <- data.frame(Anno, Percentuali, Tipo_copertura)
 View(multitemporal2_a)
 
-# BARCHART neve nei 4 anni
+# BARCHART NEVE NEI 4 ANNI
 ggplot(multitemporal1_a, aes(x=Anno, y=PercNeve, col=Anno))+
   geom_bar(stat="identity", fill="white")
 
-# BARCHART vegetazione nei 4 mesi
+# BARCHART VEGETAZIONE NEI 4 ANNI
 ggplot(multitemporal1_a, aes(x=Anno, y=PercVegetazione, col=Anno))+
   geom_bar(stat="identity", fill="white")
 
+# Personalizzazione dei colori delle colonne 
 bordo_barplot <- c("Neve" = "lightblue", "Vegetazione" = "darkgreen")
 
-# BARCHART a colonnne multiple per i 4 mesi
+# Creazione di un grafico a barre a colonne multiple per visualizzare le percentuali di neve e vegetazione per ciascun periodo
 ggplot(multitemporal2_a, aes(x=Anno, y=Percentuali, col=Tipo_copertura))+
   geom_bar(stat="identity", position="dodge", fill="white", aes(color = Tipo_copertura)) +
   scale_color_manual(values = bordo_barplot)
