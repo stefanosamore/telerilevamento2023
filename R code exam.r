@@ -772,7 +772,7 @@ pc1_17 <- pca_forni17$map$PC1
 pc1_23 <- pca_forni23$map$PC1
 
 # Plot delle componenti principali PC1 per settembre 2017 e settembre 2023 con palette C di viridis (plasma)
-par(mfrow=c(1,2))# Configura il layout per due grafici affiancati
+par(mfrow=c(1,2))
 plot(pc1_17, col=viridis(200, option="C"))
 plot(pc1_23, col=viridis(200, option="C")) 
 
@@ -786,8 +786,11 @@ sdpc1_23
 # Plot della variabilità della PC1 per settembre 2017 e settembre 2023
 # Le mappe mostrano la variabilità spaziale della PC1
 par(mfrow=c(1,2))
-plot(sdpc1_17, col=viridis(200, option="B")) # utilizzando la palette "B" (inferno) di viridis
+plot(sdpc1_17, col=viridis(200, option="B")) # utilizzando la palette B (inferno) di viridis
 plot(sdpc1_23, col=viridis(200, option="B"))
+# Dalle immagini risulta una variabilità maggiore nel 2017, con aree molti più pixel con valori elevati di eterogeneità (giallo) 
+# Le aree con valori alti di eterogeneità sono principalemte i margini glaciali, che delimitano le zone di ghiacciaio molto omogenee.
+# Nel 2023 le aree eterogenee sono notevolmente diminuite, segno di una diminuzione dei margini glaciali e del suolo nudo più omogeneo emerso dal ritiro dei ghiacciai
 
 # MISURE DI ETEROGENEITA': PCA
 # Area ghiacciaio Adamello
@@ -814,7 +817,7 @@ pc1_a23 <- pca_adam23$map$PC1
 par(mfrow=c(1,2))
 plot(pc1_a17, col=viridis(200, option="C"))
 plot(pc1_a23, col=viridis(200, option="C")) 
-
+# Calcolo della variabilità della PC1 utilizzando una moving window di 3x3
 sdpc1_a17 <- focal(pc1_a17, matrix(1/9, 3, 3), fun=sd)
 sdpc1_a17
 sdpc1_a23 <- focal(pc1_a23, matrix(1/9, 3, 3), fun=sd) 
@@ -823,6 +826,9 @@ sdpc1_a23
 par(mfrow=c(1,2))
 plot(sdpc1_a17, col=viridis(200, option="B"))
 plot(sdpc1_a23, col=viridis(200, option="B"))
+# Nel 2017 sono molto evidenti i ghiacciai come grandi zone omogenee circondate da margini molto definiti con valori alti di eterogeneità. 
+# Nel 2023 i margini glaciali si sono modificati risultando più irregolari e diminuendo di estensione. 
+# L'mmagine del 2023 riuslta avere anche altre zone con valori medi di eterogeneità ma sono tutti i crinali con versanti in ombra. I valori altri di eterogeneità rimangono sui margini glaciali
 
 # Confronto PC1 tra Forni e Adamello
 # Creazione di una griglia di grafici 2x2 per visualizzare la variabilità della PC1
@@ -832,3 +838,6 @@ plot(sdpc1_23, col=viridis(200, option="B"))
 plot(sdpc1_a17, col=viridis(200, option="B"))
 plot(sdpc1_a23, col=viridis(200, option="B"))
 # Questo confronto visivo permette di osservare e confrontare la variabilità spaziale della componente principale PC1
+# Possiamo ipotizzare dalla immagini prodotte che l'area dell'Adamello sia oggi molto soggetto ai cambiamenti climatici, mentre nel 2017, seppur con segni di regressione, era ancora in buono stato.
+# Al contrario il gruppo dell' Ortles sembrava già subire molto i cambiamenti climatici nel 2017 come mostrano gli elevati valori di variabilità, e al 2023 i corpi glaciali rimasti risultano pochi, di piccole dimesioni e in forte sofferenza.
+# Queste differenze tra le due aree potrebbero essere causate: dalla maggior dimensione del ghiacciaio dell'Adamello e dalla tipologia di ghiacciaio ( es: Adamello di tipo Scandinavo, Forni: di tipo Himalayano)
