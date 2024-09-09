@@ -26,12 +26,12 @@ rlist0323
 # importiamo le immagini raster in una lista
 import0323 <- lapply(rlist0323, raster)
 import0323
-# creiamo uno stack di immagini raster (multibanda)
+# creiamo uno stack (combinazione dei vari layer) di immagini raster (multibanda)
 forni0323 <- stack(import0323)
 forni0323
 
-#plot
-# visualizziamo il raster in diverse bande
+# Plot
+# Visualizziamo il raster in diverse bande
 plot(forni0323)
 plotRGB(forni0323, r=4, g=3, b=2, stretch="hist") # Composizione RGB con stretching istogramma
 
@@ -42,16 +42,16 @@ areaghiacc
 # Ritagliamo il raster usando l'area del ghiacciaio (shapefile) sull'immagine scaricata da Landsat
 fornicut0323 <- crop(forni0323, areaghiacc)
 fornicut0323
-# visualizziamo il raster ritagliato
+# Visualizziamo il raster ritagliato
 plot(fornicut0323)
 plotRGB(fornicut0323, r=4, g=3, b=2, stretch="lin") # stretching lineare
 plotRGB(fornicut0323, r=5, g=4, b=3, stretch="lin") # Visualizzazione in Near-Infrared (NIR)
 
-#con la funzione mask abbiamo ritagliato il raster secondo la forma precisa dello shapefile
+# Con la funzione mask abbiamo ritagliato il raster secondo la forma precisa dello shapefile
 forni0323d <- mask(fornicut0323, areaghiacc)
 plot(forni0323d)
 
-# visualizziamo in colori naturali e il NIR nel rosso
+# Visualizziamo in colori naturali e il NIR nel rosso
 plotRGB(forni0323d, r=4, g=3, b=2, stretch="lin")
 plotRGB(forni0323d, r=5, g=4, b=3, stretch="lin")
 
@@ -73,13 +73,13 @@ plot(fornicut0923)
 plotRGB(fornicut0923, r=4, g=3, b=2, stretch="lin")
 plotRGB(fornicut0923, r=5, g=4, b=3, stretch="lin")
 
-# utilizziamo la funzione mask per il ritagliato del raster sulla forma dello shapefile
+# Utilizziamo la funzione mask per il ritagliato del raster sulla forma dello shapefile
 forni0923d <- mask(fornicut0923, areaghiacc)
 plot(forni0923d)
 plotRGB(forni0923d, r=4, g=3, b=2, stretch="lin")
 plotRGB(forni0923d, r=5, g=4, b=3, stretch="lin")
 
-#immagine marzo 2009, scaricata da Landsat 7
+# Immagine marzo 2009, scaricata da Landsat 7
 rlist0309 <- list.files(pattern="LE07_L2SP_193028_20090316_20200912_02_T1_SR_B")
 rlist0309
 import0309 <- lapply(rlist0309, raster)
@@ -199,6 +199,9 @@ plot(ndvi0317, col=viridis(200, option="F")) # Visualizzazione con la palette F 
 plot(ndvi0323, col=viridis(200, option="F")) 
 plot(ndvi0917, col=viridis(200, option="F")) 
 plot(ndvi0923, col=viridis(200, option="F"))
+# Valori alti di NDVI (colorazione più chiara) inidcano aree coperte da vegetazione (che riflette fortemente nel vicino infrarosso e assorbe molto la componenete rossa
+# Coperture a neve e ghiaccio danno valori di NDVI prossimi allo zero o negativi ( riflettono moderatamante sia nel rosso che nel NIR)
+# La neve riflette più del ghiaccio, infatti risulta avere valori poco più alti di NDVI rispetto al ghiaccio (fonte:esa)
 
 # Calcolo del NDSI (Normalized Difference Snow Index)
 # Il NDSI viene utilizzato per rilevare la neve neve, che ha una riflettanza elevata nel verde e bassa nel SWIR.
@@ -226,7 +229,10 @@ plot(ndsi0317, col=viridis(200, option="G")) # Utilizza la funzione viridis con 
 plot(ndsi0323, col=viridis(200, option="G")) 
 plot(ndsi0917, col=viridis(200, option="G")) 
 plot(ndsi0923, col=viridis(200, option="G")) 
+# Valori alti di NDSI indicano neve o ghiaccio (non distinguendoli), in quanto la neve riflette molto nel verde ma poco nel medio infrarosso (SWIR)
+# La vegetazione presenta valori vicino allo 0 in quanto riflette più nello SWIR che nel verde
 
+# ALTRI INDICI
 # Sperimentazione di altri indici, esclusi dalla presentazione
 # le immagini risultanti risultanti non fornivano risultati significativi per l'interpretazione dei dati
 # Calcolo del NDGI (Normalized Difference Glacier Index)
@@ -265,7 +271,7 @@ plot(ndsi0923, col=viridis(200, option="G"))
 # plot(ndsii0917, col=viridis(200, option="G")) 
 # plot(ndsii0923, col=viridis(200, option="G")) 
 
-#CLASSIFiCAZIONE
+# CLASSIFiCAZIONE
 # La funzione 'unsuperClass' esegue una classificazione delle immagini raster in base ai dati forniti
 # Richiediamo di suddividerle in 3 classi (nClasses=3). Queste classi rappresentano diverse superfici come neve, neve sporca e vegetazione
 
@@ -783,7 +789,7 @@ par(mfrow=c(1,2))
 plot(sdpc1_17, col=viridis(200, option="B")) # utilizzando la palette "B" (inferno) di viridis
 plot(sdpc1_23, col=viridis(200, option="B"))
 
-# MISURE DI ETEROGENEITà: PCA
+# MISURE DI ETEROGENEITA': PCA
 # Area ghiacciaio Adamello
 # seguo esattamente gli stessi passaggi descritti sopra
 adam0917d
