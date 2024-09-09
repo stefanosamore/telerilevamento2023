@@ -17,7 +17,7 @@ library(RStoolbox)
 library(devtools)
 
 #setting della wd in cui si trovano i nostri dati
-setwd("C:/lab/Forni_Glacier_Analysis")
+setwd("/Users/stefanosamore/desktop/lab/Forni_Glacier_Analysis")
 
 # Importiamo le immagini satellitari di marzo 2023
 # creo una lista dei file con un pattern specifico
