@@ -1,26 +1,26 @@
 # Installiamo i pacchetti necessari per le analisi 
 #install.packages("terra") #gestione e analisi di dati raster
-#install.packages("viridis") # palette di colori
+#install.packages("viridis") # palette colori
 #install.packages("ggplot2") # creazione di grafici
 #install.packages("sf") # lavorare con shapefile e dati spaziali
 #install.packages("raster") # manipolazione di raster
 #install.packages("RStoolbox") # strumenti per l'analisi di immagini satellitari
 #install.packages("devtools")
 
-# carichiamo le library necessarie
-library(raster)
+# carichiamo i pacchetti necessari
 library(terra)
 library(viridis)
 library(ggplot2)
 library(sf)
-library(devtools)
+library(raster)
 library(RStoolbox)
+library(devtools)
 
 #setting della wd in cui si trovano i nostri dati
 setwd("C:/lab/Forni_Glacier_Analysis")
 
 # Importiamo le immagini satellitari di marzo 2023
-# lista dei file con un pattern specifico
+# creo una lista dei file con un pattern specifico
 rlist0323 <- list.files(pattern="LC08_L2SP_193028_20230315_20230321_02_T1_SR_B")
 rlist0323
 # importiamo le immagini raster in una lista
@@ -35,7 +35,7 @@ forni0323
 plot(forni0323)
 plotRGB(forni0323, r=4, g=3, b=2, stretch="hist") # Composizione RGB con stretching istogramma
 
-# Importiamo lo shapefile del ghiacciaio prodotto in QGIS
+# Importiamo lo shapefile con l'area contenente i ghiacciai prodotto in QGIS
 areaghiacc <- st_read("ghiacciaio.shp")
 areaghiacc
 
@@ -44,14 +44,14 @@ fornicut0323 <- crop(forni0323, areaghiacc)
 fornicut0323
 # visualizziamo il raster ritagliato
 plot(fornicut0323)
-plotRGB(fornicut0323, r=4, g=3, b=2, stretch="lin") # Composizione RGB con stretching lineare
+plotRGB(fornicut0323, r=4, g=3, b=2, stretch="lin") # stretching lineare
 plotRGB(fornicut0323, r=5, g=4, b=3, stretch="lin") # Visualizzazione in Near-Infrared (NIR)
 
 #con la funzione mask abbiamo ritagliato il raster secondo la forma precisa dello shapefile
 forni0323d <- mask(fornicut0323, areaghiacc)
 plot(forni0323d)
 
-# visualizziamo in colori naturali e in NIR come rosso
+# visualizziamo in colori naturali e il NIR nel rosso
 plotRGB(forni0323d, r=4, g=3, b=2, stretch="lin")
 plotRGB(forni0323d, r=5, g=4, b=3, stretch="lin")
 
@@ -102,7 +102,7 @@ plot(forni0309d)
 plotRGB(forni0309d, r=3, g=2, b=1, stretch="lin")
 plotRGB(forni0309d, r=4, g=3, b=2, stretch="lin")
 
-# Landsat 7 presenta limitazioni (stripes, colori di difficile interpretazione e difficili da confrontare)
+# Landsat 7 presenta alcune limitazioni (stripes, colori di difficile interpretazione e difficili da confrontare)
 # Optiamo quindi per immagini da Landsat 8, meglio confrontabili, a costo di fare un'analisi riferita a un periodo temporale minore
 
 # Immagine marzo 2017
@@ -158,14 +158,14 @@ plotRGB(forni0323d, r=4, g=3, b=2, stretch="lin")
 plotRGB(forni0917d, r=4, g=3, b=2, stretch="lin")
 plotRGB(forni0923d, r=4, g=3, b=2, stretch="lin")
 
-# Plot per la visualizzazione in NIR come rosso delle quattro immagini scaricate
+# Plot per la visualizzazione del NIR nel rosso delle quattro immagini scaricate
 par(mfrow=c(2, 2))
 plotRGB(forni0317d, r=5, g=4, b=3, stretch="lin")
 plotRGB(forni0323d, r=5, g=4, b=3, stretch="lin")
 plotRGB(forni0917d, r=5, g=4, b=3, stretch="lin")
 plotRGB(forni0923d, r=5, g=4, b=3, stretch="lin")
 
-# Calcolo degli indici spettrali (DVI, NDVI, NDGI, NDSI) per analizzare le condizioni del ghiacciaio
+# Calcolo degli indici spettrali (DVI, NDVI, NDSI) per analizzare la presenza di copertura data da ghiacciaio o neve
 # DVI = Differenza Vegetation Index, NDVI = Normalized Difference Vegetation Index
 #DVI and NDVI
 # immagine settembre 2023
@@ -195,7 +195,7 @@ ndvi0317
 
 # Visualizziamo gli indici NDVI
 par(mfrow=c(2, 2)) # Impostiamo un layout di 2x2 
-plot(ndvi0317, col=viridis(200, option="F")) # Visualizzazione con la palette viridis Rocket
+plot(ndvi0317, col=viridis(200, option="F")) # Visualizzazione con la palette F di viridis 'Rocket'
 plot(ndvi0323, col=viridis(200, option="F")) 
 plot(ndvi0917, col=viridis(200, option="F")) 
 plot(ndvi0923, col=viridis(200, option="F"))
@@ -265,7 +265,7 @@ plot(ndsi0923, col=viridis(200, option="G"))
 # plot(ndsii0917, col=viridis(200, option="G")) 
 # plot(ndsii0923, col=viridis(200, option="G")) 
 
-#CLASSIIFCAZIONE
+#CLASSIFiCAZIONE
 # La funzione 'unsuperClass' esegue una classificazione delle immagini raster in base ai dati forniti
 # Richiediamo di suddividerle in 3 classi (nClasses=3). Queste classi rappresentano diverse superfici come neve, neve sporca e vegetazione
 
@@ -287,7 +287,7 @@ plot(class0323$map, col=viridis(4, option="E"))
 plot(class0917$map, col=viridis(4, option="E")) 
 plot(class0923$map, col=viridis(4, option="E")) 
 
-
+# Plottiamo le immagini ottenute dalla classificazione con le immagini a colori naturali cosi da riuscire ad interpretarle meglio
 par(mfrow=c(2, 2))
 plot(class0917$map, col=viridis(4, option="E")) 
 plot(class0923$map, col=viridis(4, option="E"))
@@ -321,9 +321,9 @@ freq(class0923$map)
 
 # Numero totale di pixel
 # Il numero totale di pixel per ciascuna immagine è lo stesso: 2173908.
-# Questo numero rappresenta la risoluzione spaziale costante delle immagini usate per la classificazione.
+# Questo numero rappresenta la risoluzione spaziale delle immagini usate per la classificazione.
 forni0317d # Informazioni sul raster di marzo 2017
-tot0317 <- 2173908 # Numero totale di pixel per l'immagine di marzo 2017
+tot0317 <- 2173908  # Numero totale di pixel per l'immagine di marzo 2017
 forni0917d
 tot0917 <- 2173908
 forni0323d
@@ -374,17 +374,9 @@ veg0923 <- (656436+580055)/tot0923*100
 veg0923
 #56.87872
 
-# Visualizzazione delle immagini con classificazioni 
-# Le immagini RGB visualizzate offrono una rappresentazione visiva delle classificazioni 
-# Si osservano le variazioni nella copertura di neve, ghiaccio e vegetazione nel tempo.
-par(mfrow=c(2, 2))
-plotRGB(forni0317d, r=5, g=4, b=3, stretch="lin")
-plotRGB(forni0323d, r=5, g=4, b=3, stretch="lin")
-plotRGB(forni0917d, r=5, g=4, b=3, stretch="lin")
-plotRGB(forni0923d, r=5, g=4, b=3, stretch="lin")
-
 # DATAFRAME
 # Creazione di un dataframe con le percentuali di neve e vegetazione per ciascuna data di rilevamento
+# (gli anni verranno visualizzati nelle colonne)
 # Definizione delle classi di copertura
 classi <- c("Neve%", "Vegetazione%") # Prima colonna, nome delle classi di copertura
 # Percentuali di neve e vegetazione per ciascun periodo
@@ -398,10 +390,10 @@ View(multitemporal_conf) # Visualizzazione del dataframe
 
 # DATAFRAME CON LE PERCENTUALI DI NEVE E VEGETAZIONE PER I 4 PERIODI
 # Creazione di un dataframe con le percentuali di neve e vegetazione per i diversi periodi dell'anno
+# (gli anni verranno visualizzati nelle righe)
 Anni <- c("marzo 2017", "settembre 2017", "marzo 2023", "settembre 2023") # Prima colonna, periodi di tempo
 PercNeve <- c(29.65314, 9.832385, 33.67889, 1.452039 ) # Seconda colonna, percentuali di neve
 PercVegetazione <- c(28.72849, 48.29441, 24.6958, 56.87872) # Terza colonna, percentuali di vegetazione
-
 # Creazione del dataframe per le percentuali di neve e vegetazione
 multitemporal1 <- data.frame(Anni, PercNeve, PercVegetazione)
 View(multitemporal1)
@@ -704,6 +696,47 @@ ggplot(multitemporal2_a, aes(x=Anno, y=Percentuali, col=Tipo_copertura))+
   scale_color_manual(values = bordo_barplot)
   # Colonne affiancate
 
+# Confronto l'indice NDSI per i periodi estivi delle due aree esaminate
+# Creazione di una griglia di grafici 2x2 per visualizzare l'indice NDSI
+par(mfrow=c(2,2))
+# Plot dell'indice NDSI per settembre 2017 (area Forni)
+plot(ndsi0917, col=viridis(200, option="G")) 
+# Plot dell'indice NDSI per settembre 2023 (area Forni)
+plot(ndsi0923, col=viridis(200, option="G")) 
+# Plot dell'indice NDSI per settembre 2017 (area Adamello)
+plot(adam_ndsi0917, col=viridis(200, option="G")) 
+# Plot dell'indice NDSI per settembre 2023 (area Adamello)
+plot(adam_ndsi0923, col=viridis(200, option="G")) 
+# Questo confronto visivo consente di analizzare le variazioni dell'indice NDSI tra le due aree e tra i due periodi estivi.
+
+# DATAFRAME per confronto estati tra le due aree
+# Creazione di un dataframe per valutare la perdita di copertura di ghiaccio e neve tra le aree Forni e Adamello
+classi <- c("Neve%", "Vegetazione%") # Prima colonna, classi di copertura
+perc0917 <- c(9.832385, 48.29441) # Terza colonna, percentuali per settembre 2017 (Forni)
+perc0923 <- c(1.452039, 56.87872 ) # Quinta colonna, percentuali per settembre 2023 (Forni)
+perc_adam0917 <- c(2.421825, 43.21456) # Terza colonna, percentuali per settembre 2017 (Adamello)
+perc_adam0923 <- c(0.9996601, 44.61592) # Quinta colonna, percentuali per settembre 2023 (Adamello)
+# Creazione del dataframe con i dati
+multitemporal_conf_fa <- data.frame(classi, perc0917, perc0923, perc_adam0917, perc_adam0923)
+View(multitemporal_conf_fa)
+# Questo dataframe consente di confrontare le percentuali di neve e vegetazione tra le due aree per i diversi anni
+# Facilita l'analisi dei cambiamenti nella copertura di ghiaccio e vegetazione.
+
+# Creazione di un dataframe per il confronto delle percentuali di neve e e vegetazione tra le aree e i periodi
+Anni <- c("Ortles 09-2017", "Ortles 09-2023", " Adamello 09-2017", " Adamello 09-2023") # Prima colonna con i periodi e le aree
+PercNeve <- c(9.832385, 1.452039, 2.421825, 0.9996601) # Seconda colonna con le percentuali di neve
+PercVegetazione <- c(48.29441, 56.87872, 43.21456, 44.61592) # Terza colonna con le percentuali di vegetazione
+
+# Creazione dataframe
+multitemporal_fa <- data.frame(Anni, PercNeve, PercVegetazione)
+View(multitemporal_fa)
+# Visualizzazione del dataframe per controllare i dati
+
+# Creazione di un grafico a barre  per visualizzare le percentuali di neve
+# Specifichiamo che le barre rappresentano le percentuali di neve come valori individuali e hanno uno sfondo bianco.
+ggplot(multitemporal_fa, aes(x=Anni, y=PercNeve, col=Anni))+
+  geom_bar(stat="identity", fill="white") 
+
 # MISURE DI ETEROGENEITÀ: PCA
 # Area ghiacciaio dei Forni
 # Ridimensionamento dell'immagine per velocizzare le esecuzioni successive
@@ -712,7 +745,7 @@ ggplot(multitemporal2_a, aes(x=Anno, y=Percentuali, col=Tipo_copertura))+
 forni0917dres <- aggregate(forni0917d, fact=5)
 forni0923dres <- aggregate(forni0923d, fact=5)
 
-# Calcolo della PCA
+# CALCOLO DELLA PCA
 # PCA per settembre 2017
 pca_forni17 <- rasterPCA(forni0917dres) 
 # PCA per settembre 2023
@@ -737,7 +770,7 @@ par(mfrow=c(1,2))# Configura il layout per due grafici affiancati
 plot(pc1_17, col=viridis(200, option="C"))
 plot(pc1_23, col=viridis(200, option="C")) 
 
-# Calcolo della variabilità della PC1 utilizzando una finestra mobile 3x3
+# Calcolo della variabilità della PC1 utilizzando una moving window di 3x3
 # Questo aiuta a capire l'eterogeneità locale nella variabilità della PC1
 sdpc1_17 <- focal(pc1_17, matrix(1/9, 3, 3), fun=sd)
 sdpc1_17
@@ -793,45 +826,3 @@ plot(sdpc1_23, col=viridis(200, option="B"))
 plot(sdpc1_a17, col=viridis(200, option="B"))
 plot(sdpc1_a23, col=viridis(200, option="B"))
 # Questo confronto visivo permette di osservare e confrontare la variabilità spaziale della componente principale PC1
-# tra le due aree e tra i due periodi, utilizzando una palette di colori "viridis" per rappresentare la variabilità.
-
-# Confronto l'indice NDSI per i periodi estivi delle due aree esaminate
-# Creazione di una griglia di grafici 2x2 per visualizzare l'indice NDSI
-par(mfrow=c(2,2))
-# Plot dell'indice NDSI per settembre 2017 (area Forni)
-plot(ndsi0917, col=viridis(200, option="G")) 
-# Plot dell'indice NDSI per settembre 2023 (area Forni)
-plot(ndsi0923, col=viridis(200, option="G")) 
-# Plot dell'indice NDSI per settembre 2017 (area Adamello)
-plot(adam_ndsi0917, col=viridis(200, option="G")) 
-# Plot dell'indice NDSI per settembre 2023 (area Adamello)
-plot(adam_ndsi0923, col=viridis(200, option="G")) 
-# Questo confronto visivo consente di analizzare le variazioni dell'indice NDSI tra le due aree e tra i due periodi estivi.
-
-# DATAFRAME per confronto estati tra le due aree
-# Creazione di un dataframe per valutare la perdita di copertura di ghiaccio e neve tra le aree Forni e Adamello
-classi <- c("Neve%", "Vegetazione%") # Prima colonna, classi di copertura
-perc0917 <- c(9.832385, 48.29441) # Terza colonna, percentuali per settembre 2017 (Forni)
-perc0923 <- c(1.452039, 56.87872 ) # Quinta colonna, percentuali per settembre 2023 (Forni)
-perc_adam0917 <- c(2.421825, 43.21456) # Terza colonna, percentuali per settembre 2017 (Adamello)
-perc_adam0923 <- c(0.9996601, 44.61592) # Quinta colonna, percentuali per settembre 2023 (Adamello)
-# Creazione del dataframe con i dati
-multitemporal_conf_fa <- data.frame(classi, perc0917, perc0923, perc_adam0917, perc_adam0923)
-View(multitemporal_conf_fa)
-# Questo dataframe consente di confrontare le percentuali di neve e vegetazione tra le due aree per i diversi anni
-# Facilita l'analisi dei cambiamenti nella copertura di ghiaccio e vegetazione.
-
-# Creazione di un dataframe per il confronto delle percentuali di neve e e vegetazione tra le aree e i periodi
-Anni <- c("Ortles 09-2017", "Ortles 09-2023", " Adamello 09-2017", " Adamello 09-2023") # Prima colonna con i periodi e le aree
-PercNeve <- c(9.832385, 1.452039, 2.421825, 0.9996601) # Seconda colonna con le percentuali di neve
-PercVegetazione <- c(48.29441, 56.87872, 43.21456, 44.61592) # Terza colonna con le percentuali di vegetazione
-
-# Creazione dataframe
-multitemporal_fa <- data.frame(Anni, PercNeve, PercVegetazione)
-View(multitemporal_fa)
-# Visualizzazione del dataframe per controllare i dati
-
-# Creazione di un grafico a barre  per visualizzare le percentuali di neve
-# Specifichiamo che le barre rappresentano le percentuali di neve come valori individuali e hanno uno sfondo bianco.
-ggplot(multitemporal_fa, aes(x=Anni, y=PercNeve, col=Anni))+
-  geom_bar(stat="identity", fill="white") 
