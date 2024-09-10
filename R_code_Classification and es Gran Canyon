@@ -13,16 +13,16 @@ plotRGB(sun, 1, 2, 3, stretch = "lin")
 plotRGB(sun, 1, 2, 3, stretch = "hist")
 sun
 
-- Get values
+# Get values
 single_nr <- getValues(sun)
 single_nr
 # restituisce tutti i valori di un numero di righe di un oggetto Raster
 
-- Classify
+# Classify
 k_cluster <- kmeans(single_nr, centers = 3) # centers = numero di classes/clusters
 k_cluster
 
-- Set values to a raster on the basis of the sun image
+# Set values to a raster on the basis of the sun image
 sun_class <- setValues(sun[[1]], k_cluster$cluster) # assign new values to a raster object
 
 cl <- colorRampPalette(c("yellow", "black", "red"))(100)
