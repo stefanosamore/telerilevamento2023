@@ -1,93 +1,100 @@
 # MULTIVARIATE ANALYSIS: ridurre un set di dati multidimensionale
 
-# Pacchetti richiesti
+# Pacchetti richiesti per l'analisi multivariata
 library(raster)
 library(ggplot2)
 library(viridis)
 
-# Set the wd in Mac
+# Imposta la directory di lavoro su Mac
 setwd("/User/stefano/desktop/lab")
 
-
-# Caricamento dei dati
+# Caricamento dei dati dell'immagine satellitare (multibanda)
 sen <- brick("sentinel.png")
 sen
 # NIR = banda 1
 # red = banda 2
 # green = banda 3
-ncell(sen)  # numero di celle
-plot(sen)  # plot
+# Visualizzazione del numero di celle (pixel)
+ncell(sen)  
+# Plot dell'immagine multibanda
+plot(sen)  
+# Visualizzazione dell'immagine con RGB ( 1=NIR, 2=Rosso, 3=Verde)
 plotRGB(sen,1,2,3)
 
-# visualizzazione dell'immagine in modo che la vegetazione diventi verde 
+# Visualizzazione con la vegetazione in verde (invertendo NIR e Red)
 plotRGB(sen,2,1,3)
 
-# Raggruppiamo le bande, rimuoviamo l'ultima
+# Raggruppiamo le prime tre bande e rimuoviamo eventuali bande aggiuntive
 sen2 <- stack(sen[[1]], sen[[2]], sen[[3]])
 plot(sen2)
 
-# PCA (Principal Component Analysis)
+# PCA (Principal Component Analysis) per ridurre le dimensioni dei dati
+# Estrazione di un campione casuale di 10000 pixel
 sample <- sampleRandom(sen2, 10000)
+# Calcolo della PCA sul campione
 pca <- prcomp(sample)
 
-# varianza 
+# Visualizzazione della varianza spiegata da ogni componente principale
 summary(pca)
 
-# The first component is the one with the highest variability
-
-# correlazione con le bande originali
+# La prima componente ha la maggiore variabilità, ovvero spiega la maggior parte delle informazioni.
+# Correlazione tra le componenti principali e le bande originali
 pca
 
-# Pc map: visualizzazione dall'analisi della PCA
+# Mappa delle componenti principali: calcolo delle nuove bande (PCs) dall'analisi PCA
 pci <- predict(sen2, pca, index = c(1:3)) # or c(1:2)
 plot(pci)
-plot(pci[[1]])
+plot(pci[[1]])  # Visualizza la prima componente principale
 
-# Plottiamo con ggplot
+# Conversione della prima componente principale in dataframe per plottarla con ggplot
 pcid <- as.data.frame(pci[[1]], xy = T)  # coerce into a dataframe
 pcid
+# Plot della prima componente principale usando ggplot e viridis
 ggplot() +
   geom_raster(pcid,
               mapping = aes(x = x, y = y, fill = PC1)) +
   scale_fill_viridis() 
 
-# magma
+# Visualizzazione con la palette "magma" di viridis
 ggplot() +
   geom_raster(pcid,
               mapping = aes(x = x, y = y, fill = PC1)) +
   scale_fill_viridis(option = "magma")
 
-# inferno 
+# Visualizzazione con la palette "inferno" di viridis
 ggplot() +
   geom_raster(pcid,
               mapping = aes(x = x,y = y, fill = PC1)) +
   scale_fill_viridis(option = "inferno")
 
 
-# Deviazione standard (focal)
+# Calcolo della deviazione standard usando una finestra di 3x3 pixel
 sd3 <- focal(pci[[1]], matrix(1/9, 3, 3), fun = sd)
 
-# convertiamo in un dataframe
+# Conversione della deviazione standard in dataframe per la visualizzazione
 sd3d <- as.data.frame(sd3, xy = T)
 
-# Plot
+# Plot della deviazione standard con viridis
 ggplot() +
   geom_raster(sd3d,
               mapping = aes(x = x, y = y, fill = layer)) +
   scale_fill_viridis()
 
-
-# aggreghiamo le celle, per velocizzare le analisi
+# Aggregazione delle celle dell'immagine (riduce la risoluzione) per velocizzare l'analisi
 senres <- aggregate(sen, fact = 10)
 
-# visualizziamo le immagini insieme 
+# Visualizzazione delle immagini insieme con patchwork
 library(patchwork)
+# Prima immagine: vegetazione in verde
 im1 <- plotRGB(sen,2,1,3)
+# Seconda immagine: prima componente principale (PC1) visualizzata con ggplot
 im2 <- ggplot() +
   geom_raster(pcid,
-              mapping = aes(x = x, y = y, fill = PC1))
+              mapping = aes(x = x, y = y, fill = PC1)
+# Terza immagine: deviazione standard della prima componente principale
 im3 <- ggplot() +
   geom_raster(sd3d,
               mapping = aes(x = x, y = y, fill = layer)) +
   scale_fill_viridis(option = "inferno")
+# Combina le tre immagini in un unico plot
 im1 + im2 + im3
